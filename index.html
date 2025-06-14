@@ -83,6 +83,11 @@
             transform: translateY(-3px);
         }
         
+        mark {
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
         /* Mobile-specific styles */
         @media (max-width: 768px) {
             header {
@@ -115,6 +120,16 @@
                     <div>
                         <h1 class="text-2xl font-bold">Relic's Tech Support</h1>
                         <p class="text-gray-400">Specialist Handbook</p>
+                    </div>
+                </div>
+                <div class="flex-1 mx-4 max-w-md">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Search handbook..." 
+                            class="w-full bg-gray-700 text-gray-200 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onkeydown="if(event.key === 'Enter') performSearch()">
+                        <button onclick="performSearch()" class="absolute right-3 top-2 text-gray-400 hover:text-blue-400">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
                 </div>
                 <div class="text-sm text-gray-400">
@@ -970,6 +985,20 @@
         </div>
     </main>
 
+    <!-- Search Results -->
+    <div id="searchResults" class="hidden container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-blue-400">Search Results</h2>
+            <button onclick="clearSearch()" class="text-gray-400 hover:text-blue-400">
+                <i class="fas fa-times mr-1"></i> Clear
+            </button>
+        </div>
+        <div id="resultsContainer" class="space-y-4"></div>
+        <div id="noResults" class="hidden text-center py-12">
+            <p class="text-xl text-gray-400">No Results Found</p>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-gray-800 py-6 border-t border-gray-700">
         <div class="container mx-auto px-4">
@@ -990,6 +1019,108 @@
     </footer>
 
     <script>
+        // Search functionality
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!query) return;
+            
+            // Hide all pages and show search results
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById('searchResults').classList.remove('hidden');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const noResults = document.getElementById('noResults');
+            resultsContainer.innerHTML = '';
+            
+            // Search through all sections
+            const sections = document.querySelectorAll('.page');
+            let hasResults = false;
+            
+            sections.forEach(section => {
+                const sectionId = section.id;
+                const sectionName = section.querySelector('h2')?.textContent || `Section ${sectionId.replace('section', '')}`;
+                const sectionIcon = section.querySelector('.handbook-section i')?.className || 'fas fa-book';
+                
+                const textContent = section.textContent.toLowerCase();
+                const matches = [];
+                
+                // Find all matches in this section
+                let pos = 0;
+                while ((pos = textContent.indexOf(query, pos)) !== -1) {
+                    const start = Math.max(0, pos - 30);
+                    const end = Math.min(textContent.length, pos + query.length + 30);
+                    const context = textContent.substring(start, end);
+                    
+                    matches.push({
+                        context: context,
+                        position: pos
+                    });
+                    
+                    pos += query.length;
+                }
+                
+                if (matches.length > 0) {
+                    hasResults = true;
+                    
+                    // Create result card for this section
+                    const resultCard = document.createElement('div');
+                    resultCard.className = 'handbook-section p-6 rounded-lg cursor-pointer';
+                    resultCard.onclick = () => {
+                        showPage(sectionId);
+                        setTimeout(() => {
+                            // Scroll to first match in section
+                            const element = document.querySelector(`#${sectionId} mark`);
+                            if (element) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }, 100);
+                    };
+                    
+                    // Section header
+                    const header = document.createElement('div');
+                    header.className = 'flex items-center mb-3';
+                    header.innerHTML = `
+                        <div class="text-blue-400 text-xl mr-3">
+                            <i class="${sectionIcon}"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold">${sectionName}</h3>
+                    `;
+                    resultCard.appendChild(header);
+                    
+                    // Add matches
+                    matches.slice(0, 3).forEach(match => {
+                        const matchDiv = document.createElement('div');
+                        matchDiv.className = 'mb-2 text-gray-300';
+                        
+                        // Highlight the match in context
+                        const matchPos = match.position - (match.position - 30);
+                        const before = match.context.substring(0, matchPos);
+                        const matched = match.context.substring(matchPos, matchPos + query.length);
+                        const after = match.context.substring(matchPos + query.length);
+                        
+                        matchDiv.innerHTML = `...${before}<mark class="bg-yellow-300 text-black">${matched}</mark>${after}...`;
+                        resultCard.appendChild(matchDiv);
+                    });
+                    
+                    if (matches.length > 3) {
+                        const more = document.createElement('div');
+                        more.className = 'text-blue-400 text-sm';
+                        more.textContent = `+ ${matches.length - 3} more matches...`;
+                        resultCard.appendChild(more);
+                    }
+                    
+                    resultsContainer.appendChild(resultCard);
+                }
+            });
+            
+            noResults.classList.toggle('hidden', hasResults);
+        }
+        
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').classList.add('hidden');
+            showPage('home');
+        }
+
         // Function to show the selected page and update active navigation
         function showPage(pageId) {
             // Prevent default anchor behavior
