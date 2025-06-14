@@ -133,7 +133,7 @@
                     </div>
                 </div>
                 <div class="text-sm text-gray-400">
-                    Last Edited: 5/20/2025
+                    Last Edited: 6/14/2025
                 </div>
             </div>
         </div>
@@ -1159,8 +1159,83 @@
                     
                     if (matches.length > 3) {
                         const more = document.createElement('div');
-                        more.className = 'text-blue-400 text-sm';
+                        more.className = 'text-blue-400 text-sm cursor-pointer hover:underline';
                         more.textContent = `+ ${matches.length - 3} more matches...`;
+                        more.onclick = (e) => {
+                            e.stopPropagation();
+                            
+                            if (more.textContent.includes('Collapse')) {
+                                // Collapse back to original state
+                                while (resultCard.children.length > 4) { // Keep header + 3 matches + more button
+                                    resultCard.removeChild(resultCard.lastChild);
+                                }
+                                more.textContent = `+ ${matches.length - 3} more matches...`;
+                            } else {
+                                // Expand to show all matches
+                                matches.slice(3).forEach((match, index) => {
+                                    const matchDiv = document.createElement('div');
+                                    matchDiv.className = 'mb-2 text-gray-300 cursor-pointer hover:text-blue-400';
+                                    
+                                    const matchPos = match.position - (match.position - 30);
+                                    const before = match.context.substring(0, matchPos);
+                                    const matched = match.context.substring(matchPos, matchPos + query.length);
+                                    const after = match.context.substring(matchPos + query.length);
+                                    
+                                    matchDiv.innerHTML = `...${before}<mark class="bg-yellow-300 text-black">${matched}</mark>${after}...`;
+                                    
+                                    matchDiv.onclick = (e) => {
+                                        e.stopPropagation();
+                                        showPage(sectionId);
+                                        
+                                        setTimeout(() => {
+                                            const section = document.getElementById(sectionId);
+                                            const walker = document.createTreeWalker(
+                                                section, 
+                                                NodeFilter.SHOW_TEXT, 
+                                                null, 
+                                                false
+                                            );
+                                            
+                                            let node;
+                                            let foundNode = null;
+                                            let offset = 0;
+                                            
+                                            while(node = walker.nextNode()) {
+                                                const content = node.nodeValue.toLowerCase();
+                                                const matchIdx = content.indexOf(query);
+                                                
+                                                if (matchIdx !== -1) {
+                                                    if (index + 3 === offset) {
+                                                        foundNode = node;
+                                                        break;
+                                                    }
+                                                    offset++;
+                                                }
+                                            }
+                                            
+                                            if (foundNode) {
+                                                const range = document.createRange();
+                                                range.setStart(foundNode, foundNode.nodeValue.toLowerCase().indexOf(query));
+                                                range.setEnd(foundNode, foundNode.nodeValue.toLowerCase().indexOf(query) + query.length);
+                                                
+                                                const span = document.createElement('span');
+                                                span.className = 'bg-yellow-300 text-black animate-pulse';
+                                                range.surroundContents(span);
+                                                
+                                                span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                
+                                                setTimeout(() => {
+                                                    span.outerHTML = span.innerHTML;
+                                                }, 3000);
+                                            }
+                                        }, 100);
+                                    };
+                                    
+                                    resultCard.insertBefore(matchDiv, more);
+                                });
+                                more.textContent = 'Collapse';
+                            }
+                        };
                         resultCard.appendChild(more);
                     }
                     
