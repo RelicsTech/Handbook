@@ -105,6 +105,22 @@
             nav.hidden {
                 transform: translateY(-100%);
             }
+            
+            .mobile-nav-link {
+                display: flex;
+                align-items: center;
+                padding: 12px 16px;
+                transition: all 0.3s ease;
+            }
+            
+            .mobile-nav-link i {
+                width: 24px;
+                text-align: center;
+            }
+            
+            #mobileMenu {
+                overflow-y: auto;
+            }
         }
     </style>
 </head>
@@ -133,7 +149,7 @@
                     </div>
                 </div>
                 <div class="text-sm text-gray-400">
-                    Last Edited: 6/14/2025
+                    Last Edited: 6/15/2025
                 </div>
             </div>
         </div>
@@ -142,34 +158,87 @@
     <!-- Navigation -->
     <nav class="bg-gray-800 border-t border-b border-gray-700 sticky top-0 z-10" id="main-nav">
         <div class="container mx-auto px-4">
-            <div class="flex flex-wrap justify-center md:justify-start">
+            <!-- Mobile menu button -->
+            <div class="md:hidden flex justify-end py-3">
+                <button id="mobileMenuButton" class="text-gray-300 hover:text-blue-400 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Desktop menu -->
+            <div class="hidden md:flex flex-wrap justify-center md:justify-start">
                 <a href="#" class="nav-link px-4 py-3 text-blue-400 active" onclick="showPage('home')">
                     <i class="fas fa-home mr-2"></i>Home
                 </a>
                 <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section1')">
-                    <i class="fas fa-ticket-alt mr-2"></i>Section I
+                    <i class="fas fa-ticket-alt mr-2"></i>Tickets
                 </a>
                 <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section2')">
-                    <i class="fas fa-wrench mr-2"></i>Section II
+                    <i class="fas fa-wrench mr-2"></i>Tech Support
                 </a>
                 <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section3')">
-                    <i class="fas fa-desktop mr-2"></i>Section III
+                    <i class="fas fa-desktop mr-2"></i>PC Building
                 </a>
                 <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section4')">
-                    <i class="fas fa-book-open mr-2"></i>Section IV
+                    <i class="fas fa-book-open mr-2"></i>Resources
                 </a>
                 <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section5')">
-                    <i class="fas fa-terminal mr-2"></i>Section V
+                    <i class="fas fa-terminal mr-2"></i>Commands
                 </a>
                 <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section6')">
-                    <i class="fas fa-star mr-2"></i>Section VI
+                    <i class="fas fa-star mr-2"></i>Ranks
                 </a>
                 <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section7')">
-                    <i class="fas fa-clipboard-list mr-2"></i>Section VII
+                    <i class="fas fa-clipboard-list mr-2"></i>Policies
+                </a>
+                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section8')">
+                    <i class="fas fa-robot mr-2"></i>AI
                 </a>
             </div>
         </div>
     </nav>
+
+    <!-- Mobile menu overlay -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden"></div>
+    
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="fixed top-0 right-0 h-full w-64 bg-gray-800 shadow-lg z-30 transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+            <h3 class="text-xl font-semibold">Menu</h3>
+            <button id="closeMobileMenu" class="text-gray-300 hover:text-blue-400">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="flex flex-col py-2">
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('home'); closeMobileMenu();">
+                <i class="fas fa-home mr-3"></i>Home
+            </a>
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section1'); closeMobileMenu();">
+                <i class="fas fa-ticket-alt mr-3"></i>Tickets
+            </a>
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section2'); closeMobileMenu();">
+                <i class="fas fa-wrench mr-3"></i>Tech Support
+            </a>
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section3'); closeMobileMenu();">
+                <i class="fas fa-desktop mr-3"></i>PC Building
+            </a>
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section4'); closeMobileMenu();">
+                <i class="fas fa-book-open mr-3"></i>Resources
+            </a>
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section5'); closeMobileMenu();">
+                <i class="fas fa-terminal mr-3"></i>Commands
+            </a>
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section6'); closeMobileMenu();">
+                <i class="fas fa-star mr-3"></i>Ranks
+            </a>
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section7'); closeMobileMenu();">
+                <i class="fas fa-clipboard-list mr-3"></i>Policies
+            </a>
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section8'); closeMobileMenu();">
+                <i class="fas fa-robot mr-3"></i>AI
+            </a>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-8">
@@ -983,6 +1052,37 @@
                 </div>
             </div>
         </div>
+
+        <!-- Section VIII: AI Assistant -->
+        <div id="section8" class="page">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section VIII: AI Assistant</h2>
+                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
+                
+                <div class="handbook-section p-6 rounded-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Ask Our AI Assistant</h3>
+                    <p class="mb-6">Get instant help from our AI assistant for any tech support questions.</p>
+                    
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <div id="chatWindow" class="h-96 overflow-y-auto mb-4 space-y-4 p-2">
+                            <div class="bg-gray-700 p-3 rounded-lg max-w-3/4">
+                                <div class="font-semibold text-blue-400 mb-1">AI Assistant</div>
+                                <p>Hello! I'm here to help with your tech support questions. What can I assist you with today?</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <input type="text" id="userInput" placeholder="Type your question here..." 
+                                class="flex-grow bg-gray-700 text-gray-200 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                onkeydown="if(event.key === 'Enter') sendMessage()">
+                            <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Search Results -->
@@ -1279,8 +1379,99 @@
             window.scrollTo(0, 0);
         }
         
+        // AI Chat Functions
+        const API_KEY = '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';
+        const MAX_CHAT_HISTORY = 50;
+        
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage('You', message, 'bg-gray-600', 'text-right');
+            input.value = '';
+            
+            // Show loading indicator
+            const loadingId = 'loading-' + Date.now();
+            addMessage('AI Assistant', 'Thinking...', 'bg-gray-700', '', loadingId);
+            
+            try {
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'openai/gpt-3.5-turbo',
+                        messages: [{
+                            role: 'user',
+                            content: message
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                const reply = data.choices[0].message.content;
+                
+                // Remove loading and add actual response
+                const loadingElement = document.getElementById(loadingId);
+                if (loadingElement) loadingElement.remove();
+                
+                addMessage('AI Assistant', reply, 'bg-gray-700');
+            } catch (error) {
+                console.error('Error:', error);
+                const loadingElement = document.getElementById(loadingId);
+                if (loadingElement) loadingElement.remove();
+                
+                addMessage('AI Assistant', 'Sorry, I encountered an error. Please try again later.', 'bg-gray-700');
+            }
+        }
+        
+        function addMessage(sender, text, bgClass, alignClass = '', id = '') {
+            const chatWindow = document.getElementById('chatWindow');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `${bgClass} p-3 rounded-lg max-w-3/4 ${alignClass}`;
+            if (id) messageDiv.id = id;
+            
+            messageDiv.innerHTML = `
+                <div class="font-semibold ${sender === 'You' ? 'text-green-400' : 'text-blue-400'} mb-1">${sender}</div>
+                <p>${text}</p>
+            `;
+            
+            chatWindow.appendChild(messageDiv);
+            
+            // Remove oldest messages if we exceed the limit
+            const messages = chatWindow.querySelectorAll('div');
+            if (messages.length > MAX_CHAT_HISTORY) {
+                chatWindow.removeChild(messages[0]);
+            }
+            
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            menu.classList.toggle('translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            menu.classList.add('translate-x-full');
+            overlay.classList.add('hidden');
+        }
+
         // Set home as default active page
         document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu event listeners
+            document.getElementById('mobileMenuButton').addEventListener('click', toggleMobileMenu);
+            document.getElementById('closeMobileMenu').addEventListener('click', closeMobileMenu);
+            document.getElementById('mobileMenuOverlay').addEventListener('click', closeMobileMenu);
             showPage('home');
             
             // Mobile scroll behavior for header
