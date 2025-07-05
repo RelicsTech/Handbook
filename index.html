@@ -191,9 +191,6 @@
                 <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section7')">
                     <i class="fas fa-clipboard-list mr-2"></i>Policies
                 </a>
-                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section8')">
-                    <i class="fas fa-robot mr-2"></i>AI
-                </a>
             </div>
         </div>
     </nav>
@@ -233,9 +230,6 @@
             </a>
             <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section7'); closeMobileMenu();">
                 <i class="fas fa-clipboard-list mr-3"></i>Policies
-            </a>
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section8'); closeMobileMenu();">
-                <i class="fas fa-robot mr-3"></i>AI
             </a>
         </div>
     </div>
@@ -938,6 +932,33 @@
                         <p>Remember that while AI can provide helpful suggestions, our goal is to offer human-to-human support with personal attention to each user's unique situation.</p>
                     </div>
                 </div>
+
+                <div class="handbook-section p-6 rounded-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Personal Information Policy</h3>
+                    <div class="space-y-4">
+                        <p>Specialists must refrain from asking users for personal information including but not limited to:</p>
+                        
+                        <div class="bg-yellow-900 bg-opacity-30 border-l-4 border-yellow-500 p-4 mb-4">
+                            <h4 class="font-semibold text-yellow-400 mb-2">Important Notice:</h4>
+                            <p>In order to preserve the user's privacy and uphold strict ethical standards, specialists must avoid collecting any personally identifiable information unless absolutely necessary and explicitly consented to.</p>
+                        </div>
+                        
+                        <div class="bg-gray-800 p-4 rounded-lg">
+                            <h4 class="font-semibold text-blue-400 mb-2">Prohibited Information Requests:</h4>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>Full name or any identifying aliases</li>
+                                <li>Physical address or location details</li>
+                                <li>Phone numbers</li>
+                                <li>Email addresses</li>
+                                <li>Identification numbers (SSN, driver's license, etc.)</li>
+                                <li>Financial information</li>
+                                <li>Any other information that could be used to identify or contact the user</li>
+                            </ul>
+                        </div>
+                        
+                        <p>Specialists must prioritize user privacy and only request information that is strictly necessary for the technical support task at hand. Any requests for personal information must be justified by absolute necessity and require explicit user consent.</p>
+                    </div>
+                </div>
                 
                 <div class="handbook-section p-6 rounded-lg mb-8">
                     <h3 class="text-xl font-semibold mb-4">Promotions</h3>
@@ -1053,36 +1074,6 @@
             </div>
         </div>
 
-        <!-- Section VIII: AI Assistant -->
-        <div id="section8" class="page">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section VIII: AI Assistant</h2>
-                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Ask Our AI Assistant</h3>
-                    <p class="mb-6">Get instant help from our AI assistant for any tech support questions.</p>
-                    
-                    <div class="bg-gray-800 rounded-lg p-4">
-                        <div id="chatWindow" class="h-96 overflow-y-auto mb-4 space-y-4 p-2">
-                            <div class="bg-gray-700 p-3 rounded-lg max-w-3/4">
-                                <div class="font-semibold text-blue-400 mb-1">AI Assistant</div>
-                                <p>Hello! I'm here to help with your tech support questions. What can I assist you with today?</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex gap-2">
-                            <input type="text" id="userInput" placeholder="Type your question here..." 
-                                class="flex-grow bg-gray-700 text-gray-200 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                onkeydown="if(event.key === 'Enter') sendMessage()">
-                            <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
     <!-- Search Results -->
@@ -1379,78 +1370,6 @@
             window.scrollTo(0, 0);
         }
         
-        // AI Chat Functions
-        const API_KEY = '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';
-        const MAX_CHAT_HISTORY = 50;
-        
-        async function sendMessage() {
-            const input = document.getElementById('userInput');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            // Add user message to chat
-            addMessage('You', message, 'bg-gray-600', 'text-right');
-            input.value = '';
-            
-            // Show loading indicator
-            const loadingId = 'loading-' + Date.now();
-            addMessage('AI Assistant', 'Thinking...', 'bg-gray-700', '', loadingId);
-            
-            try {
-                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: 'openai/gpt-3.5-turbo',
-                        messages: [{
-                            role: 'user',
-                            content: message
-                        }]
-                    })
-                });
-                
-                const data = await response.json();
-                const reply = data.choices[0].message.content;
-                
-                // Remove loading and add actual response
-                const loadingElement = document.getElementById(loadingId);
-                if (loadingElement) loadingElement.remove();
-                
-                addMessage('AI Assistant', reply, 'bg-gray-700');
-            } catch (error) {
-                console.error('Error:', error);
-                const loadingElement = document.getElementById(loadingId);
-                if (loadingElement) loadingElement.remove();
-                
-                addMessage('AI Assistant', 'Sorry, I encountered an error. Please try again later.', 'bg-gray-700');
-            }
-        }
-        
-        function addMessage(sender, text, bgClass, alignClass = '', id = '') {
-            const chatWindow = document.getElementById('chatWindow');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `${bgClass} p-3 rounded-lg max-w-3/4 ${alignClass}`;
-            if (id) messageDiv.id = id;
-            
-            messageDiv.innerHTML = `
-                <div class="font-semibold ${sender === 'You' ? 'text-green-400' : 'text-blue-400'} mb-1">${sender}</div>
-                <p>${text}</p>
-            `;
-            
-            chatWindow.appendChild(messageDiv);
-            
-            // Remove oldest messages if we exceed the limit
-            const messages = chatWindow.querySelectorAll('div');
-            if (messages.length > MAX_CHAT_HISTORY) {
-                chatWindow.removeChild(messages[0]);
-            }
-            
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-
         // Mobile menu functions
         function toggleMobileMenu() {
             const menu = document.getElementById('mobileMenu');
