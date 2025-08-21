@@ -191,6 +191,9 @@
                 <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section7')">
                     <i class="fas fa-clipboard-list mr-2"></i>Policies
                 </a>
+                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showTrainingSection()">
+                    <i class="fas fa-graduation-cap mr-2"></i>Training
+                </a>
             </div>
         </div>
     </nav>
@@ -230,6 +233,9 @@
             </a>
             <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section7'); closeMobileMenu();">
                 <i class="fas fa-clipboard-list mr-3"></i>Policies
+            </a>
+            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showTrainingSection(); closeMobileMenu();">
+                <i class="fas fa-graduation-cap mr-3"></i>Training
             </a>
         </div>
     </div>
@@ -1074,6 +1080,132 @@
             </div>
         </div>
 
+        <!-- Section VIII: Training (Password Protected) -->
+        <div id="section8" class="page">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section VIII: Training Guide</h2>
+                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
+                
+                <div class="handbook-section p-6 rounded-lg mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-green-400">Welcome!</h3>
+                    <p class="mb-6">This guide is designed to train junior staff members in reviewing applications, handling tickets, and interacting with the team. Follow each step carefully to ensure consistency and quality.</p>
+                    
+                    <div class="space-y-8">
+                        <!-- Step 1 -->
+                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-blue-500">
+                            <h4 class="text-lg font-bold mb-4 text-blue-400">Step 1: Initial Contact</h4>
+                            <p class="mb-4">Paste the following message to the new staff member:</p>
+                            <div class="example-box p-4 mb-4">
+                                <p class="font-mono text-sm">
+                                    "Hello! Congrats on passing this application. I will give you the handbook to look over. If you have any questions please ask me. Tell me once you've looked over the handbook, and I will continue to the next section of this briefing. https://relicstech.github.io/Handbook/"
+                                </p>
+                            </div>
+                            <p>Wait for them to confirm they have read the handbook.</p>
+                        </div>
+                        
+                        <!-- Step 2 -->
+                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-green-500">
+                            <h4 class="text-lg font-bold mb-4 text-green-400">Step 2: Initial Questions</h4>
+                            <p class="mb-4">Once the new staff member has read the handbook, send the following message:</p>
+                            <div class="example-box p-4 mb-4">
+                                <p class="font-mono text-sm">
+                                    "If you have any questions please ask our Founder or Co-Founder, Benoopi or Gliive. Or raive_03 (Fat Hampster), a senior specialist. Please provide me with a JPEG or PNG of your Discord profile image so we can include you on the website in https://relicstech.uk/<br><br>
+                                    The amount of tickets that are opened each day depends. Sometimes there are 8 and some days there are none for a few days.<br><br>
+                                    An interview with you will not be needed, but I just want to ask you a few questions before you begin.<br><br>
+                                    I'd like you to list me 5 things you've learned from the handbook. And tell me what you ask people to complete if a PC building form is opened, and where you can view the results. Finally, tell me if you are best at PC building, or tech support or both."
+                                </p>
+                            </div>
+                            <p>After they answer, forward their responses to @benoopi or @gliive for review.</p>
+                        </div>
+                        
+                        <!-- Step 3 -->
+                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-yellow-500">
+                            <h4 class="text-lg font-bold mb-4 text-yellow-400">Step 3: Application Review</h4>
+                            <p class="mb-4">Review the new applicant's responses question by question. Ensure that:</p>
+                            <ul class="list-disc list-inside space-y-2 mb-4">
+                                <li>Responses are correct</li>
+                                <li>Responses are of high quality</li>
+                                <li>Grammar is correct</li>
+                            </ul>
+                            
+                            <h5 class="font-semibold mb-2 text-blue-400">Special Instructions for Section 2/3:</h5>
+                            <p class="mb-4">There are only two questions. Take both answers and run them through an AI detector (preferably ZeroGPT: <a href="https://www.zerogpt.com/" class="text-blue-400 hover:underline" target="_blank">https://www.zerogpt.com/</a>). Ensure the responses are accurate and of good quality.</p>
+                            
+                            <h5 class="font-semibold mb-2 text-green-400">Outcome:</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-green-900 bg-opacity-30 p-4 rounded">
+                                    <h6 class="font-semibold mb-2">If the applicant passes:</h6>
+                                    <div class="example-box p-3">
+                                        <p class="font-mono text-sm">@username Passed<br>I will train you in DMs ASAP!<br>(Post in ⁠Relics - Tech Support/PC Buildi…⁠📄┊app-results)</p>
+                                    </div>
+                                    <p class="mt-2">Begin training as per this guide.</p>
+                                </div>
+                                <div class="bg-red-900 bg-opacity-30 p-4 rounded">
+                                    <h6 class="font-semibold mb-2">If the applicant fails:</h6>
+                                    <div class="example-box p-3">
+                                        <p class="font-mono text-sm">@username Failed<br>(Brief Reason, e.g., grammar, over 25% AI use, etc.)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 4 -->
+                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-purple-500">
+                            <h4 class="text-lg font-bold mb-4 text-purple-400">Step 4: Staff Training Messages</h4>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <h5 class="font-semibold mb-2">Closing a Ticket</h5>
+                                    <p class="mb-2">Teach them to send the message:</p>
+                                    <div class="example-box p-4">
+                                        <p class="font-mono text-sm">
+                                            "Make Sure To Rate Me In ⁠⭐┊ratings!<br>
+                                            Also, please be sure to check out our staff application in ⁠📋┊applications!<br>
+                                            And Our Website At https://relicstech.uk/ !<br>
+                                            If You Enjoyed Our Services, Be Sure To Share This Server With Friends To Help us Grow!"
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-semibold mb-2">Requesting Ticket Closure</h5>
+                                    <p class="mb-2">Teach them the command:</p>
+                                    <div class="example-box p-4">
+                                        <p class="font-mono text-sm">/ticket requestclose (3d) (reason)</p>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-semibold mb-2">Staff Introduction</h5>
+                                    <p class="mb-2">Ensure the new staff member posts in #Specialist-Intros with:</p>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Name/Nickname</li>
+                                        <li>Where they're from</li>
+                                        <li>Areas of technical expertise</li>
+                                        <li>Why they joined the staff team</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Step 5 -->
+                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-red-500">
+                            <h4 class="text-lg font-bold mb-4 text-red-400">Step 5: Continuous Guidance</h4>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>Answer any questions they may have</li>
+                                <li>Monitor their performance on tickets</li>
+                                <li>Provide feedback and additional training if needed</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-blue-900 bg-opacity-30 p-6 rounded-lg text-center">
+                            <h4 class="text-xl font-bold mb-2 text-blue-400">Training Guide Conclusion</h4>
+                            <p>Follow each step carefully to ensure consistency, professionalism, and high-quality support.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Search Results -->
@@ -1383,6 +1515,37 @@
             const overlay = document.getElementById('mobileMenuOverlay');
             menu.classList.add('translate-x-full');
             overlay.classList.add('hidden');
+        }
+
+        // Training section password protection
+        function showTrainingSection() {
+            event.preventDefault();
+            const password = prompt("This section is password protected. Enter the password to continue:");
+            if (password === "adminTraining") {
+                // Hide all pages
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Show training section
+                document.getElementById('section8').classList.add('active');
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active', 'text-blue-400');
+                    link.classList.add('text-gray-300');
+                });
+                
+                // Set clicked link as active
+                event.currentTarget.classList.add('active', 'text-blue-400');
+                event.currentTarget.classList.remove('text-gray-300');
+                
+                // Scroll to top of the page
+                window.scrollTo(0, 0);
+            } else {
+                // If password was wrong or cancelled, go to home
+                showPage('home');
+            }
         }
 
         // Set home as default active page
