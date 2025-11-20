@@ -1,1015 +1,892 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relic's Tech Support - Specialist Handbook</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#172033',
+                            950: '#020617',
+                        },
+                        accent: {
+                            DEFAULT: '#3b82f6',
+                            glow: '#60a5fa',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        'slide-up': 'slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        .nav-link {
-            position: relative;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -2px;
-            left: 0;
-            background-color: #3b82f6;
-            transition: width 0.3s ease;
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
         }
-        .nav-link:hover::after {
-            width: 100%;
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
         }
-        .active::after {
-            width: 100%;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
         }
-        .page {
-            display: none;
-        }
-        .page.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .handbook-section {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-left: 4px solid #3b82f6;
-            transition: all 0.3s ease;
-        }
-        .handbook-section:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-        .example-box {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 0.5rem;
-        }
-        .resource-card {
-            transition: all 0.3s ease;
-        }
-        .resource-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .command-card {
-            background-color: rgba(30, 41, 59, 0.5);
-            border-left: 4px solid #3b82f6;
-            transition: all 0.2s ease;
-        }
-        .command-card:hover {
-            background-color: rgba(30, 41, 59, 0.8);
-        }
-        .priority-low {
-            color: #10b981;
-        }
-        .priority-medium {
-            color: #f59e0b;
-        }
-        .priority-high {
-            color: #ef4444;
-        }
-        .rank-card {
-            transition: all 0.3s ease;
-            border-left: 4px solid;
-        }
-        .rank-card:hover {
-            transform: translateY(-3px);
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
-        mark {
-            padding: 0 2px;
-            border-radius: 2px;
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        /* Mobile-specific styles */
-        @media (max-width: 768px) {
-            header {
-                transition: transform 0.3s ease;
-                transform: translateY(0);
-                z-index: 50;
-            }
-            header.hidden {
-                transform: translateY(-100%);
-            }
-            nav {
-                transition: transform 0.3s ease;
-                transform: translateY(0);
-            }
-            nav.hidden {
-                transform: translateY(-100%);
-            }
-            
-            .mobile-nav-link {
-                display: flex;
-                align-items: center;
-                padding: 12px 16px;
-                transition: all 0.3s ease;
-            }
-            
-            .mobile-nav-link i {
-                width: 24px;
-                text-align: center;
-            }
-            
-            #mobileMenu {
-                overflow-y: auto;
-            }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Typography enhancements */
+        .gradient-text {
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border-right: 3px solid #60a5fa;
+        }
+        
+        /* Mobile Sidebar Transition */
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Search Highlight Class */
+        .search-highlight {
+            background-color: rgba(234, 179, 8, 0.5); /* Yellow-500 with opacity */
+            color: white;
+            border-radius: 0.25rem;
+            padding: 0 0.125rem;
+            box-shadow: 0 0 10px rgba(234, 179, 8, 0.3);
+            transition: background-color 0.5s ease;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
-    <!-- Header -->
-    <header class="bg-gray-800 shadow-lg" id="main-header">
-        <div class="container mx-auto px-4 py-6">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center mb-4 md:mb-0">
-                    <div class="bg-blue-600 p-3 rounded-full mr-4">
-                        <i class="fas fa-book text-white text-xl"></i>
+<body class="bg-slate-950 text-slate-300 font-sans antialiased h-screen flex overflow-hidden selection:bg-blue-500/30 selection:text-blue-200">
+
+    
+    <div id="mobileOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-slate-900 border-r border-slate-800 z-50 transform -translate-x-full lg:translate-x-0 sidebar-transition flex flex-col shadow-2xl">
+        
+        <div class="p-6 flex items-center space-x-3 border-b border-slate-800/50 bg-slate-900/50 backdrop-blur-md">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <i class="fas fa-book-medical text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-slate-100 leading-tight">Relic's Support</h1>
+                <p class="text-xs text-slate-500 uppercase tracking-wider font-medium">Handbook v3.0</p>
+            </div>
+        </div>
+
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <button onclick="showPage('home')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all group active">
+                <i class="fas fa-home w-6 text-center group-hover:text-blue-400 transition-colors"></i>
+                <span class="font-medium">Home</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-slate-600 uppercase tracking-widest">Operations</div>
+
+            <button onclick="showPage('section1')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+                <i class="fas fa-ticket-alt w-6 text-center group-hover:text-green-400 transition-colors"></i>
+                <span class="font-medium">I. Tickets</span>
+            </button>
+            <button onclick="showPage('section2')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+                <i class="fas fa-wrench w-6 text-center group-hover:text-orange-400 transition-colors"></i>
+                <span class="font-medium">II. Troubleshooting</span>
+            </button>
+            <button onclick="showPage('section3')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+                <i class="fas fa-microchip w-6 text-center group-hover:text-purple-400 transition-colors"></i>
+                <span class="font-medium">III. PC Building</span>
+            </button>
+            <button onclick="showPage('section5')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+                <i class="fas fa-terminal w-6 text-center group-hover:text-yellow-400 transition-colors"></i>
+                <span class="font-medium">V. Commands</span>
+            </button>
+
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-slate-600 uppercase tracking-widest">Administration</div>
+
+            <button onclick="showPage('section6')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+                <i class="fas fa-layer-group w-6 text-center group-hover:text-pink-400 transition-colors"></i>
+                <span class="font-medium">VI. Ranks</span>
+            </button>
+            <button onclick="showPage('section7')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+                <i class="fas fa-gavel w-6 text-center group-hover:text-red-400 transition-colors"></i>
+                <span class="font-medium">VII. Policies</span>
+            </button>
+            
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-slate-600 uppercase tracking-widest">Links</div>
+
+             <button onclick="showPage('section4')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all group">
+                <i class="fas fa-external-link-alt w-6 text-center group-hover:text-teal-400 transition-colors"></i>
+                <span class="font-medium">IV. Resources</span>
+            </button>
+        </nav>
+    </aside>
+
+    
+    <div class="flex-1 flex flex-col min-w-0 h-full lg:pl-72 transition-all duration-300">
+        
+        
+        <header class="sticky top-0 z-30 h-16 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                
+                <!-- Search Bar redone like a gazillion times cuz i cant do it right-->
+                <div class="relative max-w-md hidden sm:block group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-slate-500 group-focus-within:text-blue-400 transition-colors"></i>
                     </div>
-                    <div>
-                        <h1 class="text-2xl font-bold">Relic's Tech Support</h1>
-                        <p class="text-gray-400">Specialist Handbook</p>
+                    <input type="text" id="searchInput" placeholder="Search handbook (Ctrl+K)" 
+                        class="block w-64 lg:w-96 pl-10 pr-4 py-2 border border-slate-800 rounded-lg leading-5 bg-slate-900 text-slate-300 placeholder-slate-500 focus:outline-none focus:bg-slate-800 focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 sm:text-sm transition-all"
+                        onkeydown="if(event.key === 'Enter') performSearch()">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                         <span class="text-xs text-slate-600 border border-slate-700 rounded px-1.5 py-0.5">/</span>
                     </div>
                 </div>
-                <div class="flex-1 mx-4 max-w-md">
-                    <div class="relative">
-                        <input type="text" id="searchInput" placeholder="Search handbook..." 
-                            class="w-full bg-gray-700 text-gray-200 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            onkeydown="if(event.key === 'Enter') performSearch()">
-                        <button onclick="performSearch()" class="absolute right-3 top-2 text-gray-400 hover:text-blue-400">
-                            <i class="fas fa-search"></i>
+            </div>
+
+            <div class="flex items-center gap-3 sm:gap-5">
+                <div class="hidden md:flex flex-col items-end">
+                    <span class="text-xs text-slate-500">Last Edited</span>
+                    <span class="text-xs font-mono text-blue-400">11/19/2025</span>
+                </div>
+                <a href="https://discord.gg/uN2PwKrur7" target="_blank" class="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-400 border border-indigo-500/30 hover:border-indigo-500/60 px-4 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-2 group">
+                    <i class="fab fa-discord group-hover:scale-110 transition-transform"></i>
+                    <span class="hidden sm:inline">Discord</span>
+                </a>
+            </div>
+        </header>
+
+        
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative">
+            
+            
+            <div id="searchResults" class="hidden absolute inset-0 bg-slate-950 z-20 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-between items-center mb-8 pb-4 border-b border-slate-800">
+                        <h2 class="text-2xl font-bold text-white">Search Results</h2>
+                        <button onclick="clearSearch()" class="text-slate-400 hover:text-white flex items-center gap-2 px-3 py-1 rounded-md hover:bg-slate-800 transition-colors">
+                            <i class="fas fa-times"></i> Close
                         </button>
                     </div>
-                </div>
-                <div class="text-sm text-gray-400">
-                    Last Edited: 8/25/2025
+                    <div id="resultsContainer" class="space-y-4"></div>
+                    <div id="noResults" class="hidden text-center py-20">
+                        <div class="inline-block p-4 rounded-full bg-slate-900 mb-4"><i class="fas fa-ghost text-4xl text-slate-700"></i></div>
+                        <p class="text-xl text-slate-500">No ghosts found... try a different term.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
 
-    <!-- Navigation -->
-    <nav class="bg-gray-800 border-t border-b border-gray-700 sticky top-0 z-10" id="main-nav">
-        <div class="container mx-auto px-4">
-            <!-- Mobile menu button -->
-            <div class="md:hidden flex justify-end py-3">
-                <button id="mobileMenuButton" class="text-gray-300 hover:text-blue-400 focus:outline-none">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
-            </div>
             
-            <!-- Desktop menu -->
-            <div class="hidden md:flex flex-wrap justify-center md:justify-start">
-                <a href="#" class="nav-link px-4 py-3 text-blue-400 active" onclick="showPage('home')">
-                    <i class="fas fa-home mr-2"></i>Home
-                </a>
-                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section1')">
-                    <i class="fas fa-ticket-alt mr-2"></i>Tickets
-                </a>
-                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section2')">
-                    <i class="fas fa-wrench mr-2"></i>Tech Support
-                </a>
-                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section3')">
-                    <i class="fas fa-desktop mr-2"></i>PC Building
-                </a>
-                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section4')">
-                    <i class="fas fa-book-open mr-2"></i>Resources
-                </a>
-                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section5')">
-                    <i class="fas fa-terminal mr-2"></i>Commands
-                </a>
-                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section6')">
-                    <i class="fas fa-star mr-2"></i>Ranks
-                </a>
-                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showPage('section7')">
-                    <i class="fas fa-clipboard-list mr-2"></i>Policies
-                </a>
-                <a href="#" class="nav-link px-4 py-3 text-gray-300 hover:text-blue-400" onclick="showTrainingSection()">
-                    <i class="fas fa-graduation-cap mr-2"></i>Training
-                </a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Mobile menu overlay -->
-    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden"></div>
-    
-    <!-- Mobile menu -->
-    <div id="mobileMenu" class="fixed top-0 right-0 h-full w-64 bg-gray-800 shadow-lg z-30 transform translate-x-full transition-transform duration-300 ease-in-out">
-        <div class="p-4 border-b border-gray-700 flex justify-between items-center">
-            <h3 class="text-xl font-semibold">Menu</h3>
-            <button id="closeMobileMenu" class="text-gray-300 hover:text-blue-400">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="flex flex-col py-2">
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('home'); closeMobileMenu();">
-                <i class="fas fa-home mr-3"></i>Home
-            </a>
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section1'); closeMobileMenu();">
-                <i class="fas fa-ticket-alt mr-3"></i>Tickets
-            </a>
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section2'); closeMobileMenu();">
-                <i class="fas fa-wrench mr-3"></i>Tech Support
-            </a>
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section3'); closeMobileMenu();">
-                <i class="fas fa-desktop mr-3"></i>PC Building
-            </a>
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section4'); closeMobileMenu();">
-                <i class="fas fa-book-open mr-3"></i>Resources
-            </a>
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section5'); closeMobileMenu();">
-                <i class="fas fa-terminal mr-3"></i>Commands
-            </a>
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section6'); closeMobileMenu();">
-                <i class="fas fa-star mr-3"></i>Ranks
-            </a>
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showPage('section7'); closeMobileMenu();">
-                <i class="fas fa-clipboard-list mr-3"></i>Policies
-            </a>
-            <a href="#" class="mobile-nav-link px-4 py-3 text-gray-300 hover:bg-gray-700" onclick="showTrainingSection(); closeMobileMenu();">
-                <i class="fas fa-graduation-cap mr-3"></i>Training
-            </a>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 py-8">
-        <!-- Home Page -->
-        <div id="home" class="page active">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold mb-4">Welcome to the Specialist Handbook</h2>
-                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-                    This handbook contains all the essential information you need as a Tech Support Specialist for Relic's Tech Support.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div class="bg-gray-800 rounded-lg p-6 handbook-section cursor-pointer" onclick="showPage('section1')">
-                    <div class="text-blue-400 text-2xl mb-4">
-                        <i class="fas fa-ticket-alt"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Section I: Tickets</h3>
-                    <p class="text-gray-400">Learn the proper procedures for handling and responding to support tickets.</p>
+            <div id="home" class="page active max-w-6xl mx-auto animate-fade-in">
+                <div class="mb-10 text-center sm:text-left">
+                    <h1 class="text-4xl sm:text-5xl font-bold text-white mb-4 tracking-tight">Welcome, <span class="gradient-text" id="welcomeRank">Specialist</span>.</h1>
+                    <p class="text-lg text-slate-400 max-w-2xl">Relics - Tech Support / PC Building Handbook. Your Go-To Place For Information About Being A Specialist</p>
                 </div>
 
-                <div class="bg-gray-800 rounded-lg p-6 handbook-section cursor-pointer" onclick="showPage('section2')">
-                    <div class="text-blue-400 text-2xl mb-4">
-                        <i class="fas fa-wrench"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Section II: Tech Support</h3>
-                    <p class="text-gray-400">Guidelines for troubleshooting and resolving technical issues.</p>
-                </div>
-
-                <div class="bg-gray-800 rounded-lg p-6 handbook-section cursor-pointer" onclick="showPage('section3')">
-                    <div class="text-blue-400 text-2xl mb-4">
-                        <i class="fas fa-desktop"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Section III: PC Building</h3>
-                    <p class="text-gray-400">How to assist users with PC building requests and part selection.</p>
-                </div>
-
-                <div class="bg-gray-800 rounded-lg p-6 handbook-section cursor-pointer" onclick="showPage('section4')">
-                    <div class="text-blue-400 text-2xl mb-4">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Section IV: Resources</h3>
-                    <p class="text-gray-400">Collection of useful websites and tools for technical support.</p>
-                </div>
-
-                <div class="bg-gray-800 rounded-lg p-6 handbook-section cursor-pointer" onclick="showPage('section5')">
-                    <div class="text-blue-400 text-2xl mb-4">
-                        <i class="fas fa-terminal"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Section V: Commands</h3>
-                    <p class="text-gray-400">All available ticket commands and how to use them effectively.</p>
-                </div>
-
-                <div class="bg-gray-800 rounded-lg p-6 handbook-section cursor-pointer" onclick="showPage('section6')">
-                    <div class="text-blue-400 text-2xl mb-4">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Section VI: Ranks</h3>
-                    <p class="text-gray-400">Learn about the different staff ranks, their responsibilities, and how to progress.</p>
-                </div>
-
-                <div class="bg-gray-800 rounded-lg p-6 handbook-section cursor-pointer" onclick="showPage('section7')">
-                    <div class="text-blue-400 text-2xl mb-4">
-                        <i class="fas fa-clipboard-list"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Section VII: Policies</h3>
-                    <p class="text-gray-400">Official policies and guidelines for all staff members to follow.</p>
-                </div>
-            </div>
-
-            <div class="bg-gray-800 rounded-lg p-6">
-                <h3 class="text-xl font-semibold mb-4 text-blue-400">Quick Notes</h3>
-                <ul class="space-y-2">
-                    <li class="flex items-start">
-                        <span class="text-blue-400 mr-2">•</span>
-                        <span>Always maintain professionalism in all communications</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-blue-400 mr-2">•</span>
-                        <span>Never ask for personal information from users</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-blue-400 mr-2">•</span>
-                        <span>Use the disclaimer when dealing with physical computer issues</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-blue-400 mr-2">•</span>
-                        <span>Utilize the provided resources when you need additional help</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Section I: Responding To Tickets -->
-        <div id="section1" class="page">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section I: Responding To Tickets</h2>
-                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
                 
-                <div class="mb-8 handbook-section p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-4">Ticket Claiming System</h3>
-                    <div class="bg-blue-900 bg-opacity-30 border-l-4 border-blue-500 p-4 mb-4">
-                        <h4 class="font-semibold text-blue-400 mb-2">Important Notice:</h4>
-                        <p>Our ticket system requires you to actively claim tickets before responding. This ensures clear responsibility and prevents duplicate responses.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    
+                    <div onclick="showPage('section1')" class="glass-card p-5 rounded-xl cursor-pointer group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-blue-600/20 rounded-full blur-2xl group-hover:bg-blue-600/30 transition-all"></div>
+                        <div class="relative z-10">
+                            <div class="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-ticket-alt text-2xl text-blue-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Tickets</h3>
+                            <p class="text-sm text-slate-500 group-hover:text-slate-400">Protocols for claiming & handling</p>
+                        </div>
                     </div>
 
-                    <h4 class="text-lg font-semibold mb-2 mt-6">Claiming Tickets:</h4>
-                    <ul class="list-disc list-inside space-y-2 mb-4">
-                        <li>When a ticket is opened, you must click the "Claim" button in the Tickety embed to take responsibility for it</li>
-                        <li>Claiming a ticket makes it so ONLY YOU (besides the client) can type in that ticket channel</li>
-                        <li><strong class="text-red-400">CRUCIAL:</strong> If you need to leave a ticket, you MUST:
-                            <ol class="list-decimal list-inside ml-4 mt-1 space-y-1">
-                                <li>Go to the pinned embed and click "Unclaim"</li>
-                                <li>Notify in #specialist-chat that the ticket needs reassignment</li>
-                                <li>Provide context to the next specialist taking over</li>
-                            </ol>
-                        </li>
-                    </ul>
-
-                    <h4 class="text-lg font-semibold mb-2">Supervisor Requirement:</h4>
-                    <ul class="list-disc list-inside space-y-2 mb-4">
-                        <li>All Junior Staff <strong class="text-yellow-400">must</strong> run <code class="bg-gray-700 px-2 py-1 rounded">/supervisor</code> at the start of every ticket</li>
-                        <li>This adds a Senior Specialist to oversee your work and provide guidance</li>
-                        <li>Even after promotion, you may still request supervisors for complex cases</li>
-                    </ul>
-
-                    <h3 class="text-xl font-semibold mb-4 mt-6">General Guidelines</h3>
-                    <p class="mb-4">When responding to a ticket, keep all communication strictly inside of the ticket. Never ask for any personal information from the user.</p>
-                    
-                    <div class="bg-yellow-900 bg-opacity-30 border-l-4 border-yellow-500 p-4 mb-4">
-                        <h4 class="font-semibold text-yellow-400 mb-2">Important Notice:</h4>
-                        <p>If the user's problem involves their physical computer/laptop and you need to guide them to open it and fix the issue, you must copy and paste the following message to them. They must agree before you continue:</p>
+                    <div onclick="showPage('section2')" class="glass-card p-5 rounded-xl cursor-pointer group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-orange-600/20 rounded-full blur-2xl group-hover:bg-orange-600/30 transition-all"></div>
+                        <div class="relative z-10">
+                            <div class="w-12 h-12 rounded-lg bg-orange-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-wrench text-2xl text-orange-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Troubleshoot</h3>
+                            <p class="text-sm text-slate-500 group-hover:text-slate-400">Guides for technical issues</p>
+                        </div>
                     </div>
+
+                    <div onclick="showPage('section3')" class="glass-card p-5 rounded-xl cursor-pointer group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-purple-600/20 rounded-full blur-2xl group-hover:bg-purple-600/30 transition-all"></div>
+                        <div class="relative z-10">
+                            <div class="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-microchip text-2xl text-purple-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-1">PC Building</h3>
+                            <p class="text-sm text-slate-500 group-hover:text-slate-400">Part picking & compatibility</p>
+                        </div>
+                    </div>
+
+                    <div onclick="showPage('section5')" class="glass-card p-5 rounded-xl cursor-pointer group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-yellow-600/20 rounded-full blur-2xl group-hover:bg-yellow-600/30 transition-all"></div>
+                        <div class="relative z-10">
+                            <div class="w-12 h-12 rounded-lg bg-yellow-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-terminal text-2xl text-yellow-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Commands</h3>
+                            <p class="text-sm text-slate-500 group-hover:text-slate-400">Bot command reference</p>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div onclick="showPage('section6')" class="glass-card p-4 rounded-xl cursor-pointer flex items-center gap-4 hover:bg-slate-800/50 transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-pink-500/10 flex items-center justify-center"><i class="fas fa-layer-group text-pink-400"></i></div>
+                        <div>
+                            <h4 class="font-semibold text-slate-200">Staff Ranks</h4>
+                            <p class="text-xs text-slate-500">Structure & Progression</p>
+                        </div>
+                     </div>
+                     
+                     <div onclick="showPage('section7')" class="glass-card p-4 rounded-xl cursor-pointer flex items-center gap-4 hover:bg-slate-800/50 transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center"><i class="fas fa-gavel text-red-400"></i></div>
+                        <div>
+                            <h4 class="font-semibold text-slate-200">Policies</h4>
+                            <p class="text-xs text-slate-500">Rules & Guidelines</p>
+                        </div>
+                     </div>
+                </div>
+
+                
+                <div class="mt-8 glass-panel p-6 rounded-xl border-l-4 border-blue-500 bg-blue-900/5">
+                    <h3 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-400"></i> Quick Reminders
+                    </h3>
+                    <ul class="space-y-2 text-slate-300 text-sm">
+                        <li class="flex items-start gap-2"><i class="fas fa-check text-blue-500 mt-1"></i> <span>Maintain professionalism in all communications.</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check text-blue-500 mt-1"></i> <span>Never solicit personal information.</span></li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check text-blue-500 mt-1"></i> <span>Use the <strong>/disclaimer</strong> command for hardware issues.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            <div id="section1" class="page hidden max-w-4xl mx-auto animate-slide-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-blue-500/10 rounded-lg"><i class="fas fa-ticket-alt text-2xl text-blue-400"></i></div>
+                    <h2 class="text-3xl font-bold text-white">Ticket Protocols</h2>
+                </div>
+
+                <div class="glass-card p-6 rounded-xl mb-8">
+                    <h3 class="text-xl font-semibold text-white mb-4 border-b border-slate-700 pb-2">The Claiming System</h3>
+                    <div class="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg mb-6 flex gap-4">
+                        <i class="fas fa-exclamation-circle text-blue-400 text-xl mt-0.5"></i>
+                        <div>
+                            <h4 class="text-blue-400 font-bold mb-1">Active Claiming Required</h4>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                You must click "Claim" on a ticket to take responsibility. This locks the chat so only YOU and the client can type.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-lg font-medium text-white mb-2">How to Claim</h4>
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800">
+                                
+                                <div class="flex gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold shrink-0">T</div>
+                                    <div>
+                                        <div class="flex items-baseline gap-2">
+                                            <span class="text-indigo-400 font-semibold hover:underline cursor-pointer">Tickety</span>
+                                            <span class="bg-indigo-600 text-xxs text-white px-1 rounded">BOT</span>
+                                            <span class="text-xs text-slate-500">Today at 3:42 PM</span>
+                                        </div>
+                                        <div class="bg-slate-800/50 rounded p-3 mt-1 border-l-4 border-indigo-500">
+                                            <p class="text-sm text-slate-300 mb-2">Welcome to Relic's Tech Support! A specialist will be with you shortly.</p>
+                                            <button class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-3 py-1 rounded transition-colors shadow-lg shadow-indigo-500/20">Claim Ticket</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="glass-panel p-5 rounded-lg">
+                                <h4 class="font-semibold text-red-400 mb-2 flex items-center gap-2"><i class="fas fa-sign-out-alt"></i> Leaving a Ticket</h4>
+                                <ol class="list-decimal list-inside space-y-2 text-sm text-slate-400">
+                                    <li>Go to the pinned embed & click <strong>"Unclaim"</strong>.</li>
+                                    <li>Notify in <span class="text-blue-400 font-mono bg-blue-400/10 px-1 rounded">#specialist-chat</span>.</li>
+                                    <li>Provide context for the next specialist.</li>
+                                </ol>
+                            </div>
+                            <div class="glass-panel p-5 rounded-lg">
+                                <h4 class="font-semibold text-yellow-400 mb-2 flex items-center gap-2"><i class="fas fa-user-shield"></i> Junior Supervisor Rule</h4>
+                                <p class="text-sm text-slate-400 mb-2">All Junior Staff <strong>MUST</strong> run this at the start:</p>
+                                <div class="bg-slate-950 p-2 rounded font-mono text-yellow-400 text-sm border border-slate-800 text-center">/supervisor</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-xl border-l-4 border-red-500">
+                    <h3 class="text-xl font-semibold text-white mb-4">Physical Liability Disclaimer</h3>
+                    <p class="text-slate-300 mb-4">If guiding a user to open their PC or perform physical fixes, you <strong>MUST</strong> obtain consent. Use the following command to display the disclaimer:</p>
                     
-                    <div class="example-box p-4 mb-6">
-                        <p class="font-mono text-sm">
-                            "By opening one of these tickets you agree that although we will never give you false information, we do not take any responsibility if your computer breaks or is damaged in the process of seeking support. Say I Agree/Disagree To Continue"
+                    <div class="bg-slate-950 p-2 rounded font-mono text-red-400 text-sm border border-slate-800 text-center">/disclaimer</div>
+                </div>
+            </div>
+
+            
+            <div id="section2" class="page hidden max-w-4xl mx-auto animate-slide-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-orange-500/10 rounded-lg"><i class="fas fa-wrench text-2xl text-orange-400"></i></div>
+                    <h2 class="text-3xl font-bold text-white">Tech Support & Troubleshooting</h2>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2 space-y-6">
+                        <div class="glass-card p-6 rounded-xl">
+                            <h3 class="text-lg font-semibold text-white mb-2">The Workflow</h3>
+                            <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                                Users fill out a form before the ticket opens. Check the top of the chat for their answers (OS, Issue Type, Description). Use this to jumpstart your diagnosis.
+                            </p>
+                            <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Example Ticket Flow</div>
+                                
+                                
+                                <div class="space-y-4">
+                                    <div class="flex gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs">U</div>
+                                        <div class="flex-1">
+                                            <div class="flex items-baseline justify-between">
+                                                <span class="text-slate-200 font-medium text-sm">User123</span>
+                                                <span class="text-xs text-slate-600">4:15 PM</span>
+                                            </div>
+                                            <div class="bg-slate-800 p-3 rounded-2xl rounded-tl-none mt-1 text-sm text-slate-300 border border-slate-700">
+                                                <div class="grid grid-cols-2 gap-2 mb-2 text-xs border-b border-slate-700/50 pb-2">
+                                                    <div><span class="text-slate-500">OS:</span> <span class="text-white">Win 11</span></div>
+                                                    <div><span class="text-slate-500">Issue:</span> <span class="text-red-400">Freezing</span></div>
+                                                </div>
+                                                My computer keeps freezing randomly after the last update.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex gap-3 flex-row-reverse">
+                                        <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs">S</div>
+                                        <div class="flex-1 text-right">
+                                            <div class="flex items-baseline justify-end gap-2">
+                                                <span class="text-xs text-slate-600">4:20 PM</span>
+                                                <span class="text-blue-400 font-medium text-sm">You</span>
+                                            </div>
+                                            <div class="bg-blue-600/10 p-3 rounded-2xl rounded-tr-none mt-1 text-sm text-slate-200 inline-block text-left border border-blue-500/20">
+                                                Hello! I can help with that. Did you check Task Manager to see if any specific program is spiking CPU usage?
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-1">
+                        <div class="glass-card p-5 rounded-xl h-full">
+                            <h3 class="font-semibold text-white mb-4 flex items-center gap-2"><i class="fas fa-lightbulb text-yellow-400"></i> Quick Tips</h3>
+                            <ul class="space-y-3">
+                                <li class="text-sm text-slate-400 flex gap-3">
+                                    <span class="text-blue-500 font-bold">1.</span>
+                                    <span>Check #Specialist-Resources first.</span>
+                                </li>
+                                <li class="text-sm text-slate-400 flex gap-3">
+                                    <span class="text-blue-500 font-bold">2.</span>
+                                    <span>If Needed, Use AI for brainstorming, but verify the info. Since AI Can Be Inaccurate</span>
+                                </li>
+                                <li class="text-sm text-slate-400 flex gap-3">
+                                    <span class="text-blue-500 font-bold">3.</span>
+                                    <span>Keep it simple. Start with basics (Restart, Drivers).</span>
+                                </li>
+                            </ul>
+                            <div class="mt-6 pt-6 border-t border-slate-800">
+                                <button onclick="showPage('section4')" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors">View Resources</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="section3" class="page hidden max-w-4xl mx-auto animate-slide-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-purple-500/10 rounded-lg"><i class="fas fa-microchip text-2xl text-purple-400"></i></div>
+                    <h2 class="text-3xl font-bold text-white">PC Building Requests</h2>
+                </div>
+
+                <div class="glass-card p-8 rounded-xl text-center mb-8 border-t-4 border-purple-500">
+                    <h3 class="text-2xl font-bold text-white mb-2">The Form Protocol</h3>
+                    <p class="text-slate-400 mb-6">Every user must fill out the requirements form before you build a list.</p>
+                    
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="https://forms.gle/vQsLkokZw1YdjcWF8" target="_blank" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg shadow-purple-600/20 flex items-center justify-center gap-2">
+                            <i class="fas fa-clipboard-list"></i> Link User to Form
+                        </a>
+                        <a href="https://discordapp.com/channels/1354544808273772626/1361126277645340763" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2">
+                            <i class="fab fa-discord"></i> View Results
+                        </a>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-4">Can't see results? Contact @benoopi, @gliive, or @azp3001.</p>
+                </div>
+
+                <div class="glass-card p-6 rounded-xl flex items-start gap-4">
+                    <div class="bg-green-500/10 p-3 rounded-lg shrink-0">
+                        <i class="fas fa-tools text-green-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-1">Building the List</h4>
+                        <p class="text-slate-400 text-sm mb-3">Use <strong class="text-green-400">PC Part Picker</strong> to compile components. Ensure compatibility and budget adherence.</p>
+                        <a href="https://pcpartpicker.com/list/" target="_blank" class="text-blue-400 text-sm hover:underline">Open PCPartPicker <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="section4" class="page hidden max-w-5xl mx-auto animate-slide-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-teal-500/10 rounded-lg"><i class="fas fa-external-link-alt text-2xl text-teal-400"></i></div>
+                    <h2 class="text-3xl font-bold text-white">External Resources</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <a href="https://chatgpt.com/?model=auto" target="_blank" class="glass-card p-5 rounded-xl group hover:bg-slate-800/60 transition-all">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center"><i class="fas fa-robot text-emerald-400"></i></div>
+                            <i class="fas fa-arrow-right -rotate-45 text-slate-600 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h3 class="font-bold text-white">ChatGPT</h3>
+                        <p class="text-xs text-slate-400 mt-1">AI assistance for troubleshooting logic and brainstorming.</p>
+                    </a>
+
+                    <a href="https://pcpartpicker.com/list/" target="_blank" class="glass-card p-5 rounded-xl group hover:bg-slate-800/60 transition-all">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center"><i class="fas fa-tools text-indigo-400"></i></div>
+                            <i class="fas fa-arrow-right -rotate-45 text-slate-600 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h3 class="font-bold text-white">PC Part Picker</h3>
+                        <p class="text-xs text-slate-400 mt-1">The standard for compatibility checking and lists.</p>
+                    </a>
+
+                    <a href="https://www.howtogeek.com/" target="_blank" class="glass-card p-5 rounded-xl group hover:bg-slate-800/60 transition-all">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center"><i class="fas fa-fire text-orange-400"></i></div>
+                            <i class="fas fa-arrow-right -rotate-45 text-slate-600 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h3 class="font-bold text-white">How-To Geek</h3>
+                        <p class="text-xs text-slate-400 mt-1">Detailed guides for specific, niche technical issues.</p>
+                    </a>
+                     <a href="https://www.wikihow.tech/Main-Page" target="_blank" class="glass-card p-5 rounded-xl group hover:bg-slate-800/60 transition-all">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center"><i class="fas fa-book text-green-400"></i></div>
+                            <i class="fas fa-arrow-right -rotate-45 text-slate-600 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h3 class="font-bold text-white">wikiHow Tech</h3>
+                        <p class="text-xs text-slate-400 mt-1">Step-by-step visual guides.</p>
+                    </a>
+                     <a href="https://support.apple.com/" target="_blank" class="glass-card p-5 rounded-xl group hover:bg-slate-800/60 transition-all">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-slate-500/20 flex items-center justify-center"><i class="fab fa-apple text-white"></i></div>
+                            <i class="fas fa-arrow-right -rotate-45 text-slate-600 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h3 class="font-bold text-white">Apple Support</h3>
+                        <p class="text-xs text-slate-400 mt-1">Official documentation for Mac/iOS.</p>
+                    </a>
+                    <a href="https://www.makeuseof.com/" target="_blank" class="glass-card p-5 rounded-xl group hover:bg-slate-800/60 transition-all">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center"><i class="fas fa-laptop text-yellow-400"></i></div>
+                            <i class="fas fa-arrow-right -rotate-45 text-slate-600 group-hover:text-white transition-colors"></i>
+                        </div>
+                        <h3 class="font-bold text-white">MakeUseOf</h3>
+                        <p class="text-xs text-slate-400 mt-1">Technology tips, tutorials and explanations.</p>
+                    </a>
+                </div>
+            </div>
+
+            
+            <div id="section5" class="page hidden max-w-5xl mx-auto animate-slide-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-yellow-500/10 rounded-lg"><i class="fas fa-terminal text-2xl text-yellow-400"></i></div>
+                    <h2 class="text-3xl font-bold text-white">Command Reference</h2>
+                </div>
+
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-4 border-b border-slate-800 pb-2">Basic Ticket Commands</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            
+                            <div class="glass-card p-4 rounded-lg border-l-2 border-green-500 flex flex-col bg-green-900/5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <code class="bg-slate-900 px-2 py-1 rounded text-green-400 font-mono text-sm font-bold">/ticket claim</code>
+                                    <span class="text-xs uppercase tracking-wider text-green-500/50 font-bold">Essential</span>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">Assigns the ticket to you. Required before helping.</p>
+                            </div>
+
+                             <div class="glass-card p-4 rounded-lg border-l-2 border-orange-500 flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <code class="bg-slate-900 px-2 py-1 rounded text-orange-400 font-mono text-sm font-bold">/supervisor</code>
+                                    <span class="text-xs uppercase tracking-wider text-orange-500/50 font-bold">Required</span>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">Pings Senior/Head staff to oversee your ticket. Mandatory for Junior Staff.</p>
+                            </div>
+
+                            <div class="glass-card p-4 rounded-lg border-l-2 border-yellow-500 flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <code class="bg-slate-900 px-2 py-1 rounded text-yellow-400 font-mono text-sm font-bold">/ticket priority [level]</code>
+                                    <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Utility</span>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-2">Set urgency: <span class="text-green-400">low</span>, <span class="text-yellow-400">medium</span>, <span class="text-red-400">high</span>.</p>
+                            </div>
+
+                            <div class="glass-card p-4 rounded-lg border-l-2 border-indigo-500 flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <code class="bg-slate-900 px-2 py-1 rounded text-indigo-400 font-mono text-sm font-bold">/ticket requestclose [reason] [3d]</code>
+                                    <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Action</span>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">Asks user if they want to close ticket. Must specific "3d" (3 days).</p>
+                            </div>
+
+                            
+                            <div class="glass-card p-4 rounded-lg border-l-2 border-blue-500 flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <code class="bg-slate-900 px-2 py-1 rounded text-blue-400 font-mono text-sm font-bold">/ticket add @user</code>
+                                    <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Management</span>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">Adds a new person (staff or user) to the current ticket channel.</p>
+                            </div>
+
+                            <div class="glass-card p-4 rounded-lg border-l-2 border-red-500 flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <code class="bg-slate-900 px-2 py-1 rounded text-red-400 font-mono text-sm font-bold">/ticket remove @user</code>
+                                    <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Management</span>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">Removes a user from the ticket.</p>
+                            </div>
+
+                            <div class="glass-card p-4 rounded-lg border-l-2 border-purple-500 flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <code class="bg-slate-900 px-2 py-1 rounded text-purple-400 font-mono text-sm font-bold">/ticket rename "Name"</code>
+                                    <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Utility</span>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">Changes channel name to be more descriptive.</p>
+                            </div>
+                            
+                             <div class="glass-card p-4 rounded-lg border-l-2 border-slate-500 flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <code class="bg-slate-900 px-2 py-1 rounded text-slate-400 font-mono text-sm font-bold">/ticket notes "Text"</code>
+                                    <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Internal</span>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">Adds a private note visible only to staff.</p>
+                            </div>
+
+                             <div class="glass-card p-4 rounded-lg border-l-2 border-red-600 flex flex-col">
+                                <div class="flex justify-between items-start mb-2">
+                                    <code class="bg-slate-900 px-2 py-1 rounded text-red-500 font-mono text-sm font-bold">/ticket close</code>
+                                    <span class="text-xs uppercase tracking-wider text-slate-500 font-bold">Action</span>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">Closes the ticket immediately.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-4 border-b border-slate-800 pb-2 flex items-center gap-2"><i class="fas fa-robot text-blue-400"></i> RelicAI Commands</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/ddu</code>
+                                <p class="text-xs text-slate-400 mt-1">Sends a DDU guide and links in an embed.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/whyusb</code>
+                                <p class="text-xs text-slate-400 mt-1">Explains why USB reinstall is preferable to Windows Reset.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/biosupdate</code>
+                                <p class="text-xs text-slate-400 mt-1">Step-by-step BIOS update guide.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/syschanges</code>
+                                <p class="text-xs text-slate-400 mt-1">Prompt to collect software/hardware changes before troubleshooting.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/crashlog</code>
+                                <p class="text-xs text-slate-400 mt-1">Provides a PowerShell crash log collection command and instructions.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/cmos</code>
+                                <p class="text-xs text-slate-400 mt-1">How to reset CMOS with an attached GIF.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/dchain</code>
+                                <p class="text-xs text-slate-400 mt-1">Sends a short animated gif in an embed.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/mouse</code>
+                                <p class="text-xs text-slate-400 mt-1">Mouse purchase/questionnaire with image.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/monq</code>
+                                <p class="text-xs text-slate-400 mt-1">Monitor purchase questionnaire.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/early</code>
+                                <p class="text-xs text-slate-400 mt-1">Explains why planning parts too early is not ideal.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/lhform</code>
+                                <p class="text-xs text-slate-400 mt-1">Laptop help question form/requirements.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/bhform</code>
+                                <p class="text-xs text-slate-400 mt-1">PC building form link.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800 border-green-500/30">
+                                <code class="text-green-400 font-bold">/support</code>
+                                <p class="text-xs text-slate-400 mt-1">View support channels. <strong>USE WHEN WELCOMING NEW MEMBERS.</strong></p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/installwin</code>
+                                <p class="text-xs text-slate-400 mt-1">Written and Video Guides on how to re/install Windows.</p>
+                            </div>
+                             <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/keyboard</code>
+                                <p class="text-xs text-slate-400 mt-1">Sends Keyboard preference Questionaire.</p>
+                            </div>
+                             <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/specify</code>
+                                <p class="text-xs text-slate-400 mt-1">Detailed information about your system.</p>
+                            </div>
+                             <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/driver</code>
+                                <p class="text-xs text-slate-400 mt-1">How to install drivers (alias: /drivers).</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800">
+                                <code class="text-blue-400 font-bold">/safemode</code>
+                                <p class="text-xs text-slate-400 mt-1">How to boot into Safe Mode.</p>
+                            </div>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800 border-red-500/30">
+                                <code class="text-red-400 font-bold">/disclaimer</code>
+                                <p class="text-xs text-slate-400 mt-1">Displays the official liability disclaimer.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="section6" class="page hidden max-w-4xl mx-auto animate-slide-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-pink-500/10 rounded-lg"><i class="fas fa-layer-group text-2xl text-pink-400"></i></div>
+                    <h2 class="text-3xl font-bold text-white">Staff Hierarchy</h2>
+                </div>
+
+                
+                <div class="relative border-l border-slate-800 ml-6 space-y-8 pb-8">
+                    
+                    
+                    <div class="relative pl-8 group">
+                        <div class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-blue-900 border-4 border-slate-950 group-hover:bg-blue-500 transition-colors"></div>
+                        <div class="glass-card p-6 rounded-xl border-t-4 border-blue-500">
+                            <h3 class="text-xl font-bold text-blue-400 mb-1">Junior Specialist</h3>
+                            <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-4">Entry Level</p>
+                            <p class="text-slate-300 text-sm mb-3">Probationary period. Focus on learning protocols and demonstrating reliability.</p>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800 text-xs text-slate-400">
+                                <strong>Duties:</strong> Basic tickets, Standard responses. <br>
+                                <span class="text-red-400">Must use /supervisor command.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="relative pl-8 group">
+                        <div class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-green-900 border-4 border-slate-950 group-hover:bg-green-500 transition-colors"></div>
+                        <div class="glass-card p-6 rounded-xl border-t-4 border-green-500">
+                            <h3 class="text-xl font-bold text-green-400 mb-1">Specialist</h3>
+                            <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-4">Standard Staff</p>
+                            <p class="text-slate-300 text-sm mb-3">Earned through quality support and consistency. Handles complex tickets independently.</p>
+                            <ul class="text-sm text-slate-400 list-disc list-inside">
+                                <li>Priority ticket assignment</li>
+                                <li>Mentors Junior staff</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    
+                    <div class="relative pl-8 group">
+                        <div class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-yellow-900 border-4 border-slate-950 group-hover:bg-yellow-500 transition-colors"></div>
+                        <div class="glass-card p-6 rounded-xl border-t-4 border-yellow-500">
+                            <h3 class="text-xl font-bold text-yellow-400 mb-1">Senior Specialist</h3>
+                            <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-4">Leadership</p>
+                            <p class="text-slate-300 text-sm mb-3">Outstanding dedication. Guides the team and handles escalated issues.</p>
+                            <div class="bg-slate-900/50 p-3 rounded border border-slate-800 text-xs text-slate-400">
+                                <strong>Power:</strong> Reassign tickets, Moderate chat, Fill observation forms.
+                            </div>
+                        </div>
+                    </div>
+
+                     
+                    <div class="relative pl-8 group">
+                        <div class="absolute -left-3 top-0 w-6 h-6 rounded-full bg-red-900 border-4 border-slate-950 group-hover:bg-red-500 transition-colors"></div>
+                        <div class="glass-card p-6 rounded-xl border-t-4 border-red-500 bg-red-900/5">
+                            <h3 class="text-xl font-bold text-red-400 mb-1">Head Specialist</h3>
+                            <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mb-4">Administration</p>
+                            <p class="text-slate-300 text-sm mb-3">One position only. Oversees all staff, training, and policy.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            
+            <div id="section7" class="page hidden max-w-5xl mx-auto animate-slide-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-red-500/10 rounded-lg"><i class="fas fa-gavel text-2xl text-red-400"></i></div>
+                    <h2 class="text-3xl font-bold text-white">Staff Policies</h2>
+                </div>
+
+                <div class="space-y-8">
+                    
+                    
+                    <div class="glass-card p-6 rounded-xl border border-slate-800">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-robot text-blue-400"></i> Use of AI
+                        </h3>
+                        <p class="text-slate-300 text-sm mb-4">
+                            While AI tools can be valuable resources for assisting with technical support, they should be used responsibly and in moderation.
+                        </p>
+                        
+                        <div class="bg-blue-500/10 p-4 rounded-lg border border-blue-500/20 mb-4">
+                            <h4 class="text-sm font-bold text-blue-300 mb-2 uppercase tracking-wide">Guidelines</h4>
+                            <ul class="text-slate-300 text-sm list-disc list-inside space-y-2">
+                                <li>AI may be used as a supplementary tool for research and troubleshooting.</li>
+                                <li>All responses should be reviewed and personalized before being shared with users.</li>
+                                <li><strong class="text-red-400">Direct copying of AI-generated responses is prohibited.</strong></li>
+                                <li>Your own technical knowledge should always be the primary resource.</li>
+                            </ul>
+                        </div>
+                        <p class="text-slate-400 text-xs italic">
+                            Remember that while AI can provide helpful suggestions, our goal is to offer human-to-human support with personal attention to each user's unique situation.
                         </p>
                     </div>
-                    
-                    <p>If they agree, you may proceed with the support. If they disagree, you cannot continue with physical troubleshooting.</p>
-                </div>
-            </div>
-                
-                <div class="handbook-section p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-4">Claiming Tickets</h3>
-                    <p class="mb-4">To claim a ticket, click the 'Claim' button at the bottom of the welcome text from Ticktey.</p>
-                    
-                    <div class="example-box p-4">
-                        <div class="flex items-start mb-3">
-                            <div class="bg-blue-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">T</div>
-                            <div>
-                                <div class="font-semibold">Ticktey</div>
-                <div class="text-sm text-gray-400">Today at 3:42 PM</div>
-            </div>
-        </div>
-        <div class="pl-11">
-            <p class="mb-2">Welcome to Relic's Tech Support! A specialist will be with you shortly.</p>
-            <p class="mb-4">Please describe your issue in detail so we can assist you better.</p>
-            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">Claim Ticket</button>
-        </div>
-    </div>
-</div>
-            </div>
-        </div>
 
-        <!-- Section II: Tech Support/Troubleshooting Tickets -->
-        <div id="section2" class="page">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section II: Tech Support/Troubleshooting Tickets</h2>
-                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Handling Tech Support Tickets</h3>
-                    <p class="mb-4">In this type of ticket, the user is presented with a small form of questions. You can view the answers to these questions at the top of the ticket to help them right away.</p>
-                    <p class="mb-4">Your goal is to try your best to help them resolve their issue using your technical knowledge and the resources available to you.</p>
                     
-                    <div class="bg-blue-900 bg-opacity-30 border-l-4 border-blue-500 p-4 mb-4">
-                        <h4 class="font-semibold text-blue-400 mb-2">Available Resources:</h4>
-                        <p>We have plenty of resources in the #Specialist-Resources channel of the Discord server, as well at the bottom of this handbook.</p>
-                    </div>
-                </div>
-                
-                <div class="handbook-section p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-4">Example Tech Support Ticket</h3>
-                    
-                    <div class="example-box p-4">
-                        <div class="flex items-start mb-3">
-                            <div class="bg-purple-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">U</div>
-                            <div>
-                                <div class="font-semibold">User123</div>
-                                <div class="text-sm text-gray-400">Today at 4:15 PM</div>
-                            </div>
-                        </div>
-                        <div class="pl-11">
-                            <div class="mb-4 p-3 bg-gray-700 rounded">
-                                <h4 class="font-semibold mb-2">Ticket Information:</h4>
-                                <p class="text-sm"><span class="font-semibold">Issue Type:</span> Software Problem</p>
-                                <p class="text-sm"><span class="font-semibold">Description:</span> My computer keeps freezing randomly</p>
-                                <p class="text-sm"><span class="font-semibold">OS:</span> Windows 11</p>
-                                <p class="text-sm"><span class="font-semibold">Started When:</span> After last Windows update</p>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <div class="flex items-start">
-                                    <div class="bg-green-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">S</div>
-                                    <div>
-                                        <div class="font-semibold">Specialist</div>
-                                        <div class="text-sm text-gray-400">Today at 4:20 PM</div>
-                                    </div>
-                                </div>
-                                <div class="pl-11">
-                                    <p>Hello User123, I'll be assisting you with your freezing issue. Let's try some basic troubleshooting steps first.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    <div class="glass-card p-6 rounded-xl border border-slate-800">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-user-shield text-orange-400"></i> Personal Information Policy
+                        </h3>
+                        <p class="text-slate-300 text-sm mb-4">
+                            Specialists must refrain from asking users for personal information including but not limited to:
+                        </p>
 
-        <!-- Section III: PC Building Tickets -->
-        <div id="section3" class="page">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section III: PC Building Tickets</h2>
-                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">PC Building Assistance</h3>
-                    <p class="mb-4">For PC building tickets, users are presented with questions about their budget and what they need their PC to do. Your role is to guide them through selecting the right components for their needs and budget.</p>
-                    
-                    <div class="bg-green-900 bg-opacity-30 border-l-4 border-green-500 p-4 mb-4">
-                        <h4 class="font-semibold text-green-400 mb-2">Important Step:</h4>
-                        <p>Ask them to fill out this form: <a href="https://forms.gle/vQsLkokZw1YdjcWF8" class="text-blue-400 hover:underline" target="_blank">https://forms.gle/vQsLkokZw1YdjcWF8</a></p>
-                    </div>
-                    
-                    <p class="mb-4">You can view their form results in: <a href="https://discordapp.com/channels/1354544808273772626/1361126277645340763" class="text-blue-400 hover:underline" target="_blank">Discord Channel</a> or #Form-Results</p>
-                    
-                    <div class="bg-red-900 bg-opacity-30 border-l-4 border-red-500 p-4 mb-4">
-                        <h4 class="font-semibold text-red-400 mb-2">Can't Access The Results?</h4>
-                        <p>Just ask @benoopi, @gliive, or @azp3001 (ray) for assistance.</p>
-                    </div>
-                </div>
-                
-                <div class="handbook-section p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-4">PC Part Picker</h3>
-                    <p class="mb-4">You can create a list of their selected parts on <a href="https://pcpartpicker.com/list/" class="text-blue-400 hover:underline" target="_blank">PC Part Picker</a> and then share that list with the user once completed.</p>
-                    
-                    <div class="example-box p-4">
-                        <div class="flex items-start mb-3">
-                            <div class="bg-purple-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">U</div>
-                            <div>
-                                <div class="font-semibold">PCBuilder456</div>
-                                <div class="text-sm text-gray-400">Today at 5:30 PM</div>
-                            </div>
-                        </div>
-                        <div class="pl-11">
-                            <div class="mb-4 p-3 bg-gray-700 rounded">
-                                <h4 class="font-semibold mb-2">PC Building Request:</h4>
-                                <p class="text-sm"><span class="font-semibold">Budget:</span> $1200</p>
-                                <p class="text-sm"><span class="font-semibold">Purpose:</span> Gaming</p>
-                                <p class="text-sm"><span class="font-semibold">Performance Target:</span> 1440p gaming at high settings</p>
-                                <p class="text-sm"><span class="font-semibold">Form Factor:</span> Mid-tower ATX</p>
-                            </div>
-                            
-                            <div class="mb-4">
-                                <div class="flex items-start">
-                                    <div class="bg-green-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">S</div>
-                                    <div>
-                                        <div class="font-semibold">Specialist</div>
-                                        <div class="text-sm text-gray-400">Today at 5:35 PM</div>
-                                    </div>
-                                </div>
-                                <div class="pl-11">
-                                    <p class="mb-2">Hello PCBuilder456, I'll help you put together a great gaming PC for your budget. First, please fill out this form: <a href="https://forms.gle/vQsLkokZw1YdjcWF8" class="text-blue-400 hover:underline" target="_blank">https://forms.gle/vQsLkokZw1YdjcWF8</a></p>
-                                    <p>Once you've completed that, I can start recommending specific components.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section IV: Useful Resources -->
-        <div id="section4" class="page">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section IV: Useful Resources</h2>
-                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Technical Support Resources</h3>
-                    <p class="mb-6">As a Tech Specialist, you may not always know how to respond to every situation. Here are the most important websites and resources to help you do your job effectively.</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="resource-card bg-gray-800 p-6 rounded-lg hover:bg-gray-700">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-blue-600 p-3 rounded-full mr-4">
-                                    <i class="fas fa-robot text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">ChatGPT</h4>
-                            </div>
-                            <p class="text-gray-400 mb-4">Above all others, ChatGPT can offer advice on how to deal with every situation and troubleshooting issue.</p>
-                            <a href="https://chatgpt.com/?model=auto" target="_blank" class="text-blue-400 hover:underline flex items-center">
-                                <i class="fas fa-external-link-alt mr-2"></i> Visit Website
-                            </a>
-                        </div>
-                        
-                        <div class="resource-card bg-gray-800 p-6 rounded-lg hover:bg-gray-700">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-green-600 p-3 rounded-full mr-4">
-                                    <i class="fas fa-question-circle text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">How-To Geek</h4>
-                            </div>
-                            <p class="text-gray-400 mb-4">This website can be more useful for more personalized and smaller technical issues.</p>
-                            <a href="https://www.howtogeek.com/" target="_blank" class="text-blue-400 hover:underline flex items-center">
-                                <i class="fas fa-external-link-alt mr-2"></i> Visit Website
-                            </a>
-                        </div>
-                        
-                        <div class="resource-card bg-gray-800 p-6 rounded-lg hover:bg-gray-700">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-purple-600 p-3 rounded-full mr-4">
-                                    <i class="fas fa-book text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">wikiHow Tech</h4>
-                            </div>
-                            <p class="text-gray-400 mb-4">Extremely useful for step-by-step guides on various technical procedures.</p>
-                            <a href="https://www.wikihow.tech/Main-Page" target="_blank" class="text-blue-400 hover:underline flex items-center">
-                                <i class="fas fa-external-link-alt mr-2"></i> Visit Website
-                            </a>
-                        </div>
-                        
-                        <div class="resource-card bg-gray-800 p-6 rounded-lg hover:bg-gray-700">
-                            <div class="flex items-center mb-4">
-                                <div class="bg yellow-600 p-3 rounded-full mr-4">
-                                    <i class="fas fa-laptop text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">MakeUseOf</h4>
-                            </div>
-                            <p class="text-gray-400 mb-4">Great resource for technology tips, tutorials and explanations.</p>
-                            <a href="https://www.makeuseof.com/" target="_blank" class="text-blue-400 hover:underline flex items-center">
-                                <i class="fas fa-external-link-alt mr-2"></i> Visit Website
-                            </a>
-                        </div>
-                        
-                        <div class="resource-card bg-gray-800 p-6 rounded-lg hover:bg-gray-700">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-red-600 p-3 rounded-full mr-4">
-                                    <i class="fab fa-apple text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">Apple Support</h4>
-                            </div>
-                            <p class="text-gray-400 mb-4">Official Apple support for all Apple products and services.</p>
-                            <a href="https://support.apple.com/" target="_blank" class="text-blue-400 hover:underline flex items-center">
-                                <i class="fas fa-external-link-alt mr-2"></i> Visit Website
-                            </a>
-                        </div>
-                        
-                        <div class="resource-card bg-gray-800 p-6 rounded-lg hover:bg-gray-700">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-indigo-600 p-3 rounded-full mr-4">
-                                    <i class="fas fa-tools text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">PC Part Picker</h4>
-                            </div>
-                            <p class="text-gray-400 mb-4">Essential tool for building and checking PC component compatibility.</p>
-                            <a href="https://pcpartpicker.com/list/" target="_blank" class="text-blue-400 hover:underline flex items-center">
-                                <i class="fas fa-external-link-alt mr-2"></i> Visit Website
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section V: Commands -->
-        <div id="section5" class="page">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section V: Ticket Commands</h2>
-                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Available Ticket Commands</h3>
-                    <p class="mb-6">These commands can be used in any ticket channel to manage and interact with the ticket system.</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Command Card 1 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-blue-500 p-2 rounded-full mr-3">
-                                    <i class="fas fa-user-plus text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/ticket add</h4>
-                            </div>
-                            <p class="text-gray-400">Adds a new person to the ticket. Useful when you need assistance from another specialist or want to include a manager.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/ticket add @username</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Command Card 2 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-red-500 p-2 rounded-full mr-3">
-                                    <i class="fas fa-user-minus text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/ticket remove</h4>
-                            </div>
-                            <p class="text-gray-400">Removes someone from the ticket. Use this when a specialist is no longer needed in the conversation.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/ticket remove @username</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Command Card 3 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-green-500 p-2 rounded-full mr-3">
-                                    <i class="fas fa-hand-paper text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/ticket claim</h4>
-                            </div>
-                            <p class="text-gray-400">Claims the ticket for yourself. This marks you as the responsible specialist handling this ticket.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/ticket claim</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Command Card 4 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-yellow-500 p-2 rounded-full mr-3">
-                                    <i class="fas fa-exclamation text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/ticket priority</h4>
-                            </div>
-                            <p class="text-gray-400">Changes the priority of the ticket. Priorities help organize workload and identify urgent cases.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/ticket priority [low/medium/high]</p>
-                            </div>
-                            <div class="mt-3">
-                                <h5 class="font-semibold mb-2">Priority Indicators:</h5>
-                                <div class="flex items-center mb-1">
-                                    <span class="priority-low mr-2"><i class="fas fa-circle"></i></span>
-                                    <span>Low Priority - Standard issue</span>
-                                </div>
-                                <div class="flex items-center mb-1">
-                                    <span class="priority-medium mr-2"><i class="fas fa-circle"></i></span>
-                                    <span>Medium Priority - Needs attention soon</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <span class="priority-high mr-2"><i class="fas fa-circle"></i></span>
-                                    <span>High Priority - Urgent issue</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Command Card 5 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-purple-500 p-2 rounded-full mr-3">
-                                    <i class="fas fa-pen text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/ticket rename</h4>
-                            </div>
-                            <p class="text-gray-400">Renames the ticket to something more descriptive. Helps with organization and quick identification.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/ticket rename "New Ticket Name"</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Command Card 6 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-indigo-500 p-2 rounded-full mr-3">
-                                    <i class="fas fa-door-open text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/ticket requestclose</h4>
-                            </div>
-                            <p class="text-gray-400">Requests the ticket opener if they want to close the ticket. Use when you believe the issue is resolved.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/ticket requestclose</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Command Card 7 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-red-600 p-2 rounded-full mr-3">
-                                    <i class="fas fa-times text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/ticket close</h4>
-                            </div>
-                            <p class="text-gray-400">Closes the ticket immediately. Only use when absolutely certain the issue is resolved.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/ticket close</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Command Card 8 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-blue-400 p-2 rounded-full mr-3">
-                                    <i class="fas fa-info-circle text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/ticket info</h4>
-                            </div>
-                            <p class="text-gray-400">Displays information about the ticket including creation date, participants, and current status.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/ticket info</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Command Card 9 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-green-400 p-2 rounded-full mr-3">
-                                    <i class="fas fa-sticky-note text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/ticket notes</h4>
-                            </div>
-                            <p class="text-gray-400">Adds private notes to the ticket that only staff can see. Useful for internal documentation.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/ticket notes "Your private note here"</p>
-                            </div>
+                        <div class="bg-orange-900/20 border-l-4 border-orange-500 p-4 mb-6">
+                            <h4 class="text-orange-400 font-bold text-sm mb-1">Important Notice</h4>
+                            <p class="text-slate-300 text-xs">
+                                In order to preserve the user's privacy and uphold strict ethical standards, specialists must avoid collecting any personally identifiable information unless absolutely necessary and explicitly consented to.
+                            </p>
                         </div>
 
-                        <!-- New Command Card 10 -->
-                        <div class="command-card p-5 rounded-lg">
-                            <div class="flex items-center mb-3">
-                                <div class="bg-orange-500 p-2 rounded-full mr-3">
-                                    <i class="fas fa-user-shield text-white"></i>
-                                </div>
-                                <h4 class="text-lg font-semibold">/supervisor</h4>
-                            </div>
-                            <p class="text-gray-400">Adds a Senior Specialist or Head Specialist to the ticket for additional support or oversight.</p>
-                            <div class="mt-3 p-3 bg-gray-800 rounded text-sm">
-                                <p class="font-mono">/supervisor</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section VI: Ranks -->
-        <div id="section6" class="page">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section VI: Specialist Ranks</h2>
-                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Rank Progression System</h3>
-                    <p class="mb-6">Our specialist team operates on a tiered ranking system that recognizes experience, dedication, and performance. Each rank comes with additional responsibilities and permissions.</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Junior Specialist Card -->
-                        <div class="rank-card bg-gray-800 p-6 rounded-lg border-l-blue-500">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-blue-500 p-3 rounded-full mr-4">
-                                    <i class="fas fa-user-graduate text-white"></i>
-                                </div>
-                                <h4 class="text-xl font-semibold">Junior Specialist</h4>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <h5 class="font-semibold text-blue-400 mb-1">Requirements:</h5>
-                                    <p>Entry-level position obtained after successfully applying and being accepted into our staff team.</p>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-blue-400 mb-1">Purpose:</h5>
-                                    <p>This probationary period allows you to demonstrate your technical knowledge, communication skills, and commitment to helping our community.</p>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-blue-400 mb-1">Permissions:</h5>
-                                    <ul class="list-disc list-inside space-y-1">
-                                        <li>Basic ticket management</li>
-                                        <li>Access to support resources</li>
-                                        <li>Standard response capabilities</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Specialist Card -->
-                        <div class="rank-card bg-gray-800 p-6 rounded-lg border-l-green-500">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-green-500 p-3 rounded-full mr-4">
-                                    <i class="fas fa-user-tie text-white"></i>
-                                </div>
-                                <h4 class="text-xl font-semibold">Specialist</h4>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <h5 class="font-semibold text-green-400 mb-1">Promotion Criteria:</h5>
-                                    <p>Awarded to Junior Specialists who have consistently provided high-quality support, maintained excellent response times, and received positive feedback from users.</p>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-green-400 mb-1">Responsibilities:</h5>
-                                    <p>Full ticket handling capabilities, expected to handle more complex issues, and serve as a role model for Junior Specialists.</p>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-green-400 mb-1">Additional Permissions:</h5>
-                                    <ul class="list-disc list-inside space-y-1">
-                                        <li>Priority ticket assignment</li>
-                                        <li>Extended ticket management commands</li>
-                                        <li>Ability to mentor Junior Specialists</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Senior Specialist Card -->
-                        <div class="rank-card bg-gray-800 p-6 rounded-lg border-l-yellow-500">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-yellow-500 p-3 rounded-full mr-4">
-                                    <i class="fas fa-user-shield text-white"></i>
-                                </div>
-                                <h4 class="text-xl font-semibold">Senior Specialist</h4>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <h5 class="font-semibold text-yellow-400 mb-1">Achievement:</h5>
-                                    <p>Earned by Specialists who have shown exceptional dedication, often after several months of outstanding service and leadership within the team.</p>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-yellow-400 mb-1">Leadership Role:</h5>
-                                    <p>Senior Specialists help guide the support team, assist with training, and handle the most complex technical issues.</p>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-yellow-400 mb-1">Enhanced Permissions:</h5>
-                                    <ul class="list-disc list-inside space-y-1">
-                                        <li>Priority override capabilities</li>
-                                        <li>Advanced moderation tools</li>
-                                        <li>Ability to assist with staff training</li>
-                                        <li>Can fill out Junior Staff Observation Forms to evaluate readiness for promotion</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Head Specialist Card -->
-                        <div class="rank-card bg-gray-800 p-6 rounded-lg border-l-red-500">
-                            <div class="flex items-center mb-4">
-                                <div class="bg-red-500 p-3 rounded-full mr-4">
-                                    <i class="fas fa-crown text-white"></i>
-                                </div>
-                                <h4 class="text-xl font-semibold">Head Specialist</h4>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <h5 class="font-semibold text-red-400 mb-1">Exclusive Position:</h5>
-                                    <p>Only one Head Specialist serves at any time, selected from our most experienced and trusted Senior Specialists.</p>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-red-400 mb-1">Primary Duties:</h5>
-                                    <ul class="list-disc list-inside space-y-1">
-                                        <li>Oversee all staff promotions and demotions</li>
-                                        <li>Review and process staff applications</li>
-                                        <li>Develop and conduct training programs</li>
-                                        <li>Ensure quality control across all support interactions</li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h5 class="font-semibold text-red-400 mb-1">Administrative Privileges:</h5>
-                                    <ul class="list-disc list-inside space-y-1">
-                                        <li>Full ticket system control</li>
-                                        <li>Staff management capabilities</li>
-                                        <li>Policy implementation authority</li>
-                                        <li>Final approval on all Junior Staff Observation Forms</li>
-                                        <li>Direct reporting to server administration</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-8 bg-gray-800 p-6 rounded-lg">
-                        <h4 class="text-lg font-semibold mb-4 text-blue-400">Ticket Management Permissions</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-gray-700 p-4 rounded-lg">
-                                <h5 class="font-semibold mb-2 text-yellow-400">Senior Specialists Can:</h5>
-                                <ul class="list-disc list-inside space-y-1">
-                                    <li>Reassign tickets between specialists</li>
-                                    <li>Provide guidance on complex technical issues</li>
-                                    <li>Assist with training new staff members</li>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800">
+                                <h4 class="text-red-400 font-bold text-xs uppercase mb-3 flex items-center gap-2"><i class="fas fa-ban"></i> Prohibited Information Requests</h4>
+                                <ul class="space-y-2 text-xs text-slate-400">
+                                    <li class="flex items-center gap-2"><i class="fas fa-times text-red-500/50"></i> Full name or any identifying aliases</li>
+                                    <li class="flex items-center gap-2"><i class="fas fa-times text-red-500/50"></i> Physical address or location details</li>
+                                    <li class="flex items-center gap-2"><i class="fas fa-times text-red-500/50"></i> Phone numbers</li>
+                                    <li class="flex items-center gap-2"><i class="fas fa-times text-red-500/50"></i> Email addresses</li>
+                                    <li class="flex items-center gap-2"><i class="fas fa-times text-red-500/50"></i> Identification numbers (SSN, etc.)</li>
+                                    <li class="flex items-center gap-2"><i class="fas fa-times text-red-500/50"></i> Financial information</li>
                                 </ul>
                             </div>
-                            <div class="bg-gray-700 p-4 rounded-lg">
-                                <h5 class="font-semibold mb-2 text-red-400">Head Specialist Can:</h5>
-                                <ul class="list-disc list-inside space-y-1">
-                                    <li>Perform all Senior Specialist ticket functions</li>
-                                    <li>Audit ticket history and specialist performance</li>
-                                    <li>Implement system-wide ticket policy changes</li>
-                                </ul>
+                            <div class="flex flex-col justify-center p-4">
+                                <p class="text-sm text-slate-300">
+                                    Specialists must prioritize user privacy and only request information that is strictly necessary for the technical support task at hand. Any requests for personal information must be justified by absolute necessity and require explicit user consent.
+                                </p>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Section VII: Policies -->
-        <div id="section7" class="page">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section VII: Policies</h2>
-                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Use of AI</h3>
-                    <div class="space-y-4">
-                        <p>While AI tools can be valuable resources for assisting with technical support, they should be used responsibly and in moderation.</p>
-                        
-                        <div class="bg-blue-900 bg-opacity-30 border-l-4 border-blue-500 p-4 mb-4">
-                            <h4 class="font-semibold text-blue-400 mb-2">Guidelines:</h4>
-                            <ul class="list-disc list-inside space-y-1">
-                                <li>AI may be used as a supplementary tool for research and troubleshooting</li>
-                                <li>All responses should be reviewed and personalized before being shared with users</li>
-                                <li>Direct copying of AI-generated responses is prohibited</li>
-                                <li>Your own technical knowledge should always be the primary resource</li>
-                            </ul>
-                        </div>
-                        
-                        <p>Remember that while AI can provide helpful suggestions, our goal is to offer human-to-human support with personal attention to each user's unique situation.</p>
-                    </div>
-                </div>
+                    
+                    <div class="glass-card p-6 rounded-xl border border-slate-800">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-chart-line text-green-400"></i> Promotions
+                        </h3>
+                        <p class="text-slate-300 text-sm mb-6">
+                            Our promotion system is designed to recognize and reward staff members who demonstrate consistent excellence in their roles.
+                        </p>
 
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Personal Information Policy</h3>
-                    <div class="space-y-4">
-                        <p>Specialists must refrain from asking users for personal information including but not limited to:</p>
-                        
-                        <div class="bg-yellow-900 bg-opacity-30 border-l-4 border-yellow-500 p-4 mb-4">
-                            <h4 class="font-semibold text-yellow-400 mb-2">Important Notice:</h4>
-                            <p>In order to preserve the user's privacy and uphold strict ethical standards, specialists must avoid collecting any personally identifiable information unless absolutely necessary and explicitly consented to.</p>
-                        </div>
-                        
-                        <div class="bg-gray-800 p-4 rounded-lg">
-                            <h4 class="font-semibold text-blue-400 mb-2">Prohibited Information Requests:</h4>
-                            <ul class="list-disc list-inside space-y-2">
-                                <li>Full name or any identifying aliases</li>
-                                <li>Physical address or location details</li>
-                                <li>Phone numbers</li>
-                                <li>Email addresses</li>
-                                <li>Identification numbers (SSN, driver's license, etc.)</li>
-                                <li>Financial information</li>
-                                <li>Any other information that could be used to identify or contact the user</li>
-                            </ul>
-                        </div>
-                        
-                        <p>Specialists must prioritize user privacy and only request information that is strictly necessary for the technical support task at hand. Any requests for personal information must be justified by absolute necessity and require explicit user consent.</p>
-                    </div>
-                </div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Promotions</h3>
-                    <div class="space-y-4">
-                        <p>Our promotion system is designed to recognize and reward staff members who demonstrate consistent excellence in their roles.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-gray-800 p-5 rounded-lg">
-                                <h4 class="font-semibold text-green-400 mb-3">Junior Specialist → Specialist</h4>
-                                <ul class="list-disc list-inside space-y-2">
-                                    <li>After taking several tickets and remaining active, Senior Staff+ will schedule an "Observation"</li>
-                                    <li>Senior Staff will complete an observation form evaluating your performance</li>
-                                    <li>Promotion decisions are based on this formal evaluation</li>
-                                    <li>Demonstrate consistent activity and quality responses</li>
-                                    <li>Complete an introduction in #specialist-intros including:
-                                        <ul class="list-disc list-inside ml-4 mt-1 space-y-1">
+                        <div class="grid md:grid-cols-2 gap-6 mb-6">
+                            
+                            <div class="bg-slate-900/50 p-5 rounded-lg border-t-2 border-green-500">
+                                <h4 class="text-green-400 font-bold text-lg mb-3">Junior Specialist &rarr; Specialist</h4>
+                                <ul class="text-slate-400 text-xs list-disc list-inside space-y-2">
+                                    <li>After taking several tickets and remaining active, Senior Staff+ will schedule an "Observation".</li>
+                                    <li>Senior Staff will complete an observation form evaluating your performance.</li>
+                                    <li>Promotion decisions are based on this formal evaluation.</li>
+                                    <li>Demonstrate consistent activity and quality responses.</li>
+                                    <li>Complete an introduction in <span class="text-blue-400 font-mono">#specialist-intros</span> including:
+                                        <ul class="list-circle list-inside ml-4 mt-1 text-slate-500">
                                             <li>Your name/nickname</li>
                                             <li>Where you're from</li>
                                             <li>Your areas of technical expertise</li>
@@ -1018,598 +895,296 @@
                                     </li>
                                 </ul>
                             </div>
-                            
-                            <div class="bg-gray-800 p-5 rounded-lg">
-                                <h4 class="font-semibold text-yellow-400 mb-3">Specialist → Senior Specialist</h4>
-                                <ul class="list-disc list-inside space-y-2">
-                                    <li>Consistently high user satisfaction ratings</li>
-                                    <li>Demonstrated leadership within the team</li>
-                                    <li>Active participation in community discussions</li>
-                                    <li>Willingness to mentor junior staff members</li>
-                                    <li>Consistent activity over an extended period</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-purple-900 bg-opacity-30 border-l-4 border-purple-500 p-4 mt-4">
-                            <h4 class="font-semibold text-purple-400 mb-2">Note:</h4>
-                            <p>Promotions beyond Specialist are evaluated based on overall contribution to the community, not just quantitative metrics. Leadership qualities, technical expertise, and dedication to helping others are all considered.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4">Inactivity Policy</h3>
-                    <div class="space-y-4">
-                        <p>To maintain an active and responsive support team, we require all staff members to remain engaged with our community.</p>
-                        
-                        <div class="bg-red-900 bg-opacity-30 border-l-4 border-red-500 p-4 mb-4">
-                            <h4 class="font-semibold text-red-400 mb-2">Activity Requirements:</h4>
-                            <ul class="list-disc list-inside space-y-1">
-                                <li>If you do not participate in the server in a 14 day period without warning, you can be striked, demoted, or fired</li>
-                                <li>Participation in community discussions is encouraged</li>
-                                <li>Extended absences should be communicated to leadership</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="example-box p-4">
-                            <h4 class="font-semibold mb-2">Example Scenario:</h4>
-                            <p>A staff member hasn't responded to any tickets or participated in server discussions for 3 weeks without notice. After attempts to contact them go unanswered, they would be subject to removal from the staff team.</p>
-                        </div>
-                        
-                        <p>We understand that real life takes priority, so communication about availability is always appreciated and will be taken into consideration.</p>
-                    </div>
-                </div>
-                
-                <div class="handbook-section p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold mb-4">Three Strike System</h3>
-                    <div class="space-y-4">
-                        <p>To maintain high standards of professionalism and service quality, we employ a three-strike system for policy violations.</p>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-yellow-900 bg-opacity-30 p-4 rounded-lg">
-                                <h4 class="font-semibold text-yellow-400 mb-2">First Strike</h4>
-                                <ul class="list-disc list-inside space-y-1">
-                                    <li>Issued for first-time violations including:
-                                        <ul class="list-disc list-inside ml-4 mt-1 space-y-1">
-                                            <li>Breaking server rules as staff</li>
-                                            <li>Unprofessional behavior</li>
-                                            <li>Clear misuse of AI (direct copying)</li>
-                                        </ul>
-                                    </li>
-                                    <li>Results in a formal warning</li>
-                                    <li>Lasts for 14 days</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="bg-orange-900 bg-opacity-30 p-4 rounded-lg">
-                                <h4 class="font-semibold text-orange-400 mb-2">Second Strike</h4>
-                                <ul class="list-disc list-inside space-y-1">
-                                    <li>Issued for repeating the same violations that earned the first strike</li>
-                                    <li>May result in temporary restrictions</li>
-                                    <li>Lasts for 14 days</li>
-                                    <li>Requires review with leadership</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="bg-red-900 bg-opacity-30 p-4 rounded-lg">
-                                <h4 class="font-semibold text-red-400 mb-2">Third Strike</h4>
-                                <ul class="list-disc list-inside space-y-1">
-                                    <li>Issued for continued violations after previous strikes</li>
-                                    <li>Results in removal from the staff team</li>
-                                    <li>May be appealed after 30 days</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-blue-900 bg-opacity-30 border-l-4 border-blue-500 p-4 mt-4">
-                            <h4 class="font-semibold text-blue-400 mb-2">Important:</h4>
-                            <p>Severe violations may skip the strike system entirely and result in immediate removal at the discretion of leadership. All strikes expire after 14 days if no further violations occur.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Section VIII: Training (Password Protected) -->
-        <div id="section8" class="page">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold mb-2 text-blue-400">Section VIII: Training Guide</h2>
-                <div class="h-1 w-20 bg-blue-500 mb-6"></div>
-                
-                <div class="handbook-section p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold mb-4 text-green-400">Welcome!</h3>
-                    <p class="mb-6">This guide is designed to train junior staff members in reviewing applications, handling tickets, and interacting with the team. Follow each step carefully to ensure consistency and quality.</p>
+                            
+                            <div class="bg-slate-900/50 p-5 rounded-lg border-t-2 border-yellow-500">
+                                <h4 class="text-yellow-400 font-bold text-lg mb-3">Specialist &rarr; Senior Specialist</h4>
+                                <ul class="text-slate-400 text-xs list-disc list-inside space-y-2">
+                                    <li>Consistently high user satisfaction ratings.</li>
+                                    <li>Demonstrated leadership within the team.</li>
+                                    <li>Active participation in community discussions.</li>
+                                    <li>Willingness to mentor junior staff members.</li>
+                                    <li>Consistent activity over an extended period.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-900/20 border-l-4 border-purple-500 p-4">
+                            <h4 class="text-purple-400 font-bold text-sm mb-1">Note</h4>
+                            <p class="text-slate-300 text-xs">
+                                Promotions beyond Specialist are evaluated based on overall contribution to the community, not just quantitative metrics. Leadership qualities, technical expertise, and dedication to helping others are all considered.
+                            </p>
+                        </div>
+                    </div>
+
                     
-                    <div class="space-y-8">
-                        <!-- Step 1 -->
-                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-blue-500">
-                            <h4 class="text-lg font-bold mb-4 text-blue-400">Step 1: Initial Contact</h4>
-                            <p class="mb-4">Paste the following message to the new staff member:</p>
-                            <div class="example-box p-4 mb-4">
-                                <p class="font-mono text-sm">
-                                    "Hello! Congrats on passing this application. I will give you the handbook to look over. If you have any questions please ask me. Tell me once you've looked over the handbook, and I will continue to the next section of this briefing. https://relicstech.github.io/Handbook/"
-                                </p>
-                            </div>
-                            <p>Wait for them to confirm they have read the handbook.</p>
-                        </div>
-                        
-                        <!-- Step 2 -->
-                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-green-500">
-                            <h4 class="text-lg font-bold mb-4 text-green-400">Step 2: Initial Questions</h4>
-                            <p class="mb-4">Once the new staff member has read the handbook, send the following message:</p>
-                            <div class="example-box p-4 mb-4">
-                                <p class="font-mono text-sm">
-                                    "If you have any questions please ask our Founder or Co-Founder, Benoopi or Gliive. Or raive_03 (Fat Hampster), a senior specialist. Please provide me with a JPEG or PNG of your Discord profile image so we can include you on the website in https://relicstech.uk/<br><br>
-                                    The amount of tickets that are opened each day depends. Sometimes there are 8 and some days there are none for a few days.<br><br>
-                                    An interview with you will not be needed, but I just want to ask you a few questions before you begin.<br><br>
-                                    I'd like you to list me 5 things you've learned from the handbook. And tell me what you ask people to complete if a PC building form is opened, and where you can view the results. Finally, tell me if you are best at PC building, or tech support or both."
-                                </p>
-                            </div>
-                            <p>After they answer, forward their responses to @benoopi or @gliive for review.</p>
-                        </div>
-                        
-                        <!-- Step 3 -->
-                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-yellow-500">
-                            <h4 class="text-lg font-bold mb-4 text-yellow-400">Step 3: Application Review</h4>
-                            <p class="mb-4">Review the new applicant's responses question by question. Ensure that:</p>
-                            <ul class="list-disc list-inside space-y-2 mb-4">
-                                <li>Responses are correct</li>
-                                <li>Responses are of high quality</li>
-                                <li>Grammar is correct</li>
-                            </ul>
-                            
-                            <h5 class="font-semibold mb-2 text-blue-400">Special Instructions for Section 2/3:</h5>
-                            <p class="mb-4">There are only two questions. Take both answers and run them through an AI detector (preferably ZeroGPT: <a href="https://www.zerogpt.com/" class="text-blue-400 hover:underline" target="_blank">https://www.zerogpt.com/</a>). Ensure the responses are accurate and of good quality.</p>
-                            
-                            <h5 class="font-semibold mb-2 text-green-400">Outcome:</h5>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="bg-green-900 bg-opacity-30 p-4 rounded">
-                                    <h6 class="font-semibold mb-2">If the applicant passes:</h6>
-                                    <div class="example-box p-3">
-                                        <p class="font-mono text-sm">@username Passed<br>I will train you in DMs ASAP!<br>(Post in ⁠Relics - Tech Support/PC Buildi…⁠📄┊app-results)</p>
-                                    </div>
-                                    <p class="mt-2">Begin training as per this guide.</p>
-                                </div>
-                                <div class="bg-red-900 bg-opacity-30 p-4 rounded">
-                                    <h6 class="font-semibold mb-2">If the applicant fails:</h6>
-                                    <div class="example-box p-3">
-                                        <p class="font-mono text-sm">@username Failed<br>(Brief Reason, e.g., grammar, over 25% AI use, etc.)</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Step 4 -->
-                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-purple-500">
-                            <h4 class="text-lg font-bold mb-4 text-purple-400">Step 4: Staff Training Messages</h4>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <h5 class="font-semibold mb-2">Closing a Ticket</h5>
-                                    <p class="mb-2">Teach them to send the message:</p>
-                                    <div class="example-box p-4">
-                                        <p class="font-mono text-sm">
-                                            "Make Sure To Rate Me In ⁠⭐┊ratings!<br>
-                                            Also, please be sure to check out our staff application in ⁠📋┊applications!<br>
-                                            And Our Website At https://relicstech.uk/ !<br>
-                                            If You Enjoyed Our Services, Be Sure To Share This Server With Friends To Help us Grow!"
-                                        </p>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <h5 class="font-semibold mb-2">Requesting Ticket Closure</h5>
-                                    <p class="mb-2">Teach them the command:</p>
-                                    <div class="example-box p-4">
-                                        <p class="font-mono text-sm">/ticket requestclose (3d) (reason)</p>
-                                    </div>
-                                </div>
-                                
-                                <div>
-                                    <h5 class="font-semibold mb-2">Staff Introduction</h5>
-                                    <p class="mb-2">Ensure the new staff member posts in #Specialist-Intros with:</p>
-                                    <ul class="list-disc list-inside space-y-1">
-                                        <li>Name/Nickname</li>
-                                        <li>Where they're from</li>
-                                        <li>Areas of technical expertise</li>
-                                        <li>Why they joined the staff team</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Step 5 -->
-                        <div class="bg-gray-800 p-6 rounded-lg border-l-2 border-red-500">
-                            <h4 class="text-lg font-bold mb-4 text-red-400">Step 5: Continuous Guidance</h4>
-                            <ul class="list-disc list-inside space-y-2">
-                                <li>Answer any questions they may have</li>
-                                <li>Monitor their performance on tickets</li>
-                                <li>Provide feedback and additional training if needed</li>
+                    <div class="glass-card p-6 rounded-xl border border-slate-800">
+                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-clock text-indigo-400"></i> Inactivity Policy
+                        </h3>
+                        <p class="text-slate-300 text-sm mb-4">
+                            To maintain an active and responsive support team, we require all staff members to remain engaged with our community.
+                        </p>
+
+                        <div class="bg-slate-900 p-4 rounded-lg mb-4">
+                            <h4 class="text-white font-bold text-sm mb-2">Activity Requirements:</h4>
+                            <ul class="text-slate-400 text-xs list-disc list-inside space-y-2">
+                                <li>If you do not participate in the server in a <strong class="text-white">14 day period</strong> without warning, you can be striked, demoted, or fired.</li>
+                                <li>Participation in community discussions is encouraged.</li>
+                                <li>Extended absences should be communicated to leadership.</li>
                             </ul>
                         </div>
-                        
-                        <div class="bg-blue-900 bg-opacity-30 p-6 rounded-lg text-center">
-                            <h4 class="text-xl font-bold mb-2 text-blue-400">Training Guide Conclusion</h4>
-                            <p>Follow each step carefully to ensure consistency, professionalism, and high-quality support.</p>
+
+                        <div class="flex gap-4 items-start bg-indigo-900/10 p-4 rounded-lg">
+                            <i class="fas fa-info-circle text-indigo-400 mt-1"></i>
+                            <div>
+                                <h4 class="text-indigo-400 font-bold text-xs uppercase mb-1">Example Scenario</h4>
+                                <p class="text-slate-400 text-xs leading-relaxed">
+                                    A staff member hasn't responded to any tickets or participated in server discussions for 3 weeks without notice. After attempts to contact them go unanswered, they would be subject to removal from the staff team.
+                                </p>
+                                <p class="text-slate-500 text-xs mt-2 italic">
+                                    We understand that real life takes priority, so communication about availability is always appreciated and will be taken into consideration.
+                                </p>
+                            </div>
                         </div>
                     </div>
+
+                    
+                    <div class="glass-card p-6 rounded-xl border border-slate-800">
+                        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            <i class="fas fa-exclamation-triangle text-red-400"></i> Three Strike System
+                        </h3>
+                        <p class="text-slate-300 text-sm mb-6">
+                            To maintain high standards of professionalism and service quality, we employ a three-strike system for policy violations.
+                        </p>
+
+                        <div class="grid md:grid-cols-3 gap-4 mb-6">
+                            
+                            <div class="bg-slate-900 p-4 rounded-lg border-t-4 border-yellow-500">
+                                <h4 class="text-yellow-500 font-bold text-lg mb-2">First Strike</h4>
+                                <div class="text-xs text-slate-400 space-y-2">
+                                    <p><strong class="text-white">Cause:</strong> First-time violations (e.g., Breaking rules, Unprofessional behavior, Misuse of AI).</p>
+                                    <p><strong class="text-white">Result:</strong> Formal warning.</p>
+                                    <p><strong class="text-white">Duration:</strong> 14 days.</p>
+                                </div>
+                            </div>
+
+                            
+                            <div class="bg-slate-900 p-4 rounded-lg border-t-4 border-orange-500">
+                                <h4 class="text-orange-500 font-bold text-lg mb-2">Second Strike</h4>
+                                <div class="text-xs text-slate-400 space-y-2">
+                                    <p><strong class="text-white">Cause:</strong> Repeating violations.</p>
+                                    <p><strong class="text-white">Result:</strong> Temporary restrictions & Leadership review.</p>
+                                    <p><strong class="text-white">Duration:</strong> 14 days.</p>
+                                </div>
+                            </div>
+
+                            
+                            <div class="bg-slate-900 p-4 rounded-lg border-t-4 border-red-600">
+                                <h4 class="text-red-500 font-bold text-lg mb-2">Third Strike</h4>
+                                <div class="text-xs text-slate-400 space-y-2">
+                                    <p><strong class="text-white">Cause:</strong> Continued violations.</p>
+                                    <p><strong class="text-white">Result:</strong> Removal from staff team.</p>
+                                    <p><strong class="text-white">Appeal:</strong> After 30 days.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-red-900/20 border-l-4 border-red-500 p-4">
+                            <h4 class="text-red-400 font-bold text-sm mb-1">Important</h4>
+                            <p class="text-slate-300 text-xs">
+                                Severe violations may skip the strike system entirely and result in immediate removal at the discretion of leadership. All strikes expire after 14 days if no further violations occur.
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-        </div>
-    </main>
 
-    <!-- Search Results -->
-    <div id="searchResults" class="hidden container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-blue-400">Search Results</h2>
-            <button onclick="clearSearch()" class="text-gray-400 hover:text-blue-400">
-                <i class="fas fa-times mr-1"></i> Clear
-            </button>
-        </div>
-        <div id="resultsContainer" class="space-y-4"></div>
-        <div id="noResults" class="hidden text-center py-12">
-            <p class="text-xl text-gray-400">No Results Found</p>
-        </div>
+            
+            <footer class="mt-20 pt-6 border-t border-slate-800 text-center text-slate-500 text-xs pb-8">
+                <p class="mb-2">Written with <span class="text-red-500">❤</span> by Benoopi</p>
+                <p>&copy; 2025 Relic's Tech Support. All rights reserved.</p>
+            </footer>
+
+        </main>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 py-6 border-t border-gray-700">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col items-center">
-                <div class="mb-2">
-                    <span class="text-red-500">❤</span> <span class="text-gray-400">Written with love by Benoopi</span>
-                </div>
-                <div class="mb-4 md:mb-0">
-                    <p class="text-gray-400">© 2025 Relic's Tech Support. All rights reserved.</p>
-                </div>
-                <div>
-                    <a href="https://discord.gg/uN2PwKrur7" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full inline-flex items-center">
-                        <i class="fab fa-discord mr-2"></i> Join Our Discord
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        // Search functionality
-        function performSearch() {
-            const query = document.getElementById('searchInput').value.trim().toLowerCase();
-            if (!query) return;
-            
-            // Hide all pages and show search results
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.getElementById('searchResults').classList.remove('hidden');
-            const resultsContainer = document.getElementById('resultsContainer');
-            const noResults = document.getElementById('noResults');
-            resultsContainer.innerHTML = '';
-            
-            // Search through all sections
-            const sections = document.querySelectorAll('.page');
-            let hasResults = false;
-            
-            sections.forEach(section => {
-                const sectionId = section.id;
-                const sectionName = section.querySelector('h2')?.textContent || `Section ${sectionId.replace('section', '')}`;
-                const sectionIcon = section.querySelector('.handbook-section i')?.className || 'fas fa-book';
-                
-                const textContent = section.textContent.toLowerCase();
-                const matches = [];
-                
-                // Find all matches in this section
-                let pos = 0;
-                while ((pos = textContent.indexOf(query, pos)) !== -1) {
-                    const start = Math.max(0, pos - 30);
-                    const end = Math.min(textContent.length, pos + query.length + 30);
-                    const context = textContent.substring(start, end);
-                    
-                    matches.push({
-                        context: context,
-                        position: pos
-                    });
-                    
-                    pos += query.length;
-                }
-                
-                if (matches.length > 0) {
-                    hasResults = true;
-                    
-                    // Create result card for this section
-                    const resultCard = document.createElement('div');
-                    resultCard.className = 'handbook-section p-6 rounded-lg cursor-pointer';
-                    resultCard.onclick = () => {
-                        showPage(sectionId);
-                        setTimeout(() => {
-                            // Scroll to first match in section
-                            const element = document.querySelector(`#${sectionId} mark`);
-                            if (element) {
-                                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            }
-                        }, 100);
-                    };
-                    
-                    // Section header
-                    const header = document.createElement('div');
-                    header.className = 'flex items-center mb-3';
-                    header.innerHTML = `
-                        <div class="text-blue-400 text-xl mr-3">
-                            <i class="${sectionIcon}"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold">${sectionName}</h3>
-                    `;
-                    resultCard.appendChild(header);
-                    
-                    // Add matches
-                    matches.slice(0, 3).forEach((match, index) => {
-                        const matchDiv = document.createElement('div');
-                        matchDiv.className = 'mb-2 text-gray-300 cursor-pointer hover:text-blue-400';
-                        
-                        // Highlight the match in context
-                        const matchPos = match.position - (match.position - 30);
-                        const before = match.context.substring(0, matchPos);
-                        const matched = match.context.substring(matchPos, matchPos + query.length);
-                        const after = match.context.substring(matchPos + query.length);
-                        
-                        matchDiv.innerHTML = `...${before}<mark class="bg-yellow-300 text-black">${matched}</mark>${after}...`;
-                        
-                        // Add click handler for this specific match
-                        matchDiv.onclick = (e) => {
-                            e.stopPropagation();
-                            showPage(sectionId);
-                            
-                            setTimeout(() => {
-                                // Find all text nodes in the section
-                                const section = document.getElementById(sectionId);
-                                const walker = document.createTreeWalker(
-                                    section, 
-                                    NodeFilter.SHOW_TEXT, 
-                                    null, 
-                                    false
-                                );
-                                
-                                let node;
-                                let foundNode = null;
-                                let offset = 0;
-                                
-                                while(node = walker.nextNode()) {
-                                    const content = node.nodeValue.toLowerCase();
-                                    const matchIdx = content.indexOf(query);
-                                    
-                                    if (matchIdx !== -1) {
-                                        // Check if this is the nth occurrence we're looking for
-                                        if (index === 0 || offset === index) {
-                                            foundNode = node;
-                                            break;
-                                        }
-                                        offset++;
-                                    }
-                                }
-                                
-                                if (foundNode) {
-                                    // Create range and selection
-                                    const range = document.createRange();
-                                    range.setStart(foundNode, foundNode.nodeValue.toLowerCase().indexOf(query));
-                                    range.setEnd(foundNode, foundNode.nodeValue.toLowerCase().indexOf(query) + query.length);
-                                    
-                                    // Highlight temporarily
-                                    const span = document.createElement('span');
-                                    span.className = 'bg-yellow-300 text-black animate-pulse';
-                                    range.surroundContents(span);
-                                    
-                                    // Scroll to the highlighted element
-                                    span.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                    
-                                    // Remove highlight after 3 seconds
-                                    setTimeout(() => {
-                                        span.outerHTML = span.innerHTML;
-                                    }, 3000);
-                                }
-                            }, 100);
-                        };
-                        
-                        resultCard.appendChild(matchDiv);
-                    });
-                    
-                    if (matches.length > 3) {
-                        const more = document.createElement('div');
-                        more.className = 'text-blue-400 text-sm cursor-pointer hover:underline';
-                        more.textContent = `+ ${matches.length - 3} more matches...`;
-                        more.onclick = (e) => {
-                            e.stopPropagation();
-                            
-                            if (more.textContent.includes('Collapse')) {
-                                // Collapse back to original state
-                                while (resultCard.children.length > 4) { // Keep header + 3 matches + more button
-                                    resultCard.removeChild(resultCard.lastChild);
-                                }
-                                more.textContent = `+ ${matches.length - 3} more matches...`;
-                            } else {
-                                // Expand to show all matches
-                                matches.slice(3).forEach((match, index) => {
-                                    const matchDiv = document.createElement('div');
-                                    matchDiv.className = 'mb-2 text-gray-300 cursor-pointer hover:text-blue-400';
-                                    
-                                    const matchPos = match.position - (match.position - 30);
-                                    const before = match.context.substring(0, matchPos);
-                                    const matched = match.context.substring(matchPos, matchPos + query.length);
-                                    const after = match.context.substring(matchPos + query.length);
-                                    
-                                    matchDiv.innerHTML = `...${before}<mark class="bg-yellow-300 text-black">${matched}</mark>${after}...`;
-                                    
-                                    matchDiv.onclick = (e) => {
-                                        e.stopPropagation();
-                                        showPage(sectionId);
-                                        
-                                        setTimeout(() => {
-                                            const section = document.getElementById(sectionId);
-                                            const walker = document.createTreeWalker(
-                                                section, 
-                                                NodeFilter.SHOW_TEXT, 
-                                                null, 
-                                                false
-                                            );
-                                            
-                                            let node;
-                                            let foundNode = null;
-                                            let offset = 0;
-                                            
-                                            while(node = walker.nextNode()) {
-                                                const content = node.nodeValue.toLowerCase();
-                                                const matchIdx = content.indexOf(query);
-                                                
-                                                if (matchIdx !== -1) {
-                                                    if (index + 3 === offset) {
-                                                        foundNode = node;
-                                                        break;
-                                                    }
-                                                    offset++;
-                                                }
-                                            }
-                                            
-                                            if (foundNode) {
-                                                const range = document.createRange();
-                                                range.setStart(foundNode, foundNode.nodeValue.toLowerCase().indexOf(query));
-                                                range.setEnd(foundNode, foundNode.nodeValue.toLowerCase().indexOf(query) + query.length);
-                                                
-                                                const span = document.createElement('span');
-                                                span.className = 'bg-yellow-300 text-black animate-pulse';
-                                                range.surroundContents(span);
-                                                
-                                                span.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                                
-                                                setTimeout(() => {
-                                                    span.outerHTML = span.innerHTML;
-                                                }, 3000);
-                                            }
-                                        }, 100);
-                                    };
-                                    
-                                    resultCard.insertBefore(matchDiv, more);
-                                });
-                                more.textContent = 'Collapse';
-                            }
-                        };
-                        resultCard.appendChild(more);
-                    }
-                    
-                    resultsContainer.appendChild(resultCard);
-                }
-            });
-            
-            noResults.classList.toggle('hidden', hasResults);
-        }
-        
-        function clearSearch() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('searchResults').classList.add('hidden');
-            showPage('home');
-        }
-
-        // Function to show the selected page and update active navigation
+        // --- Navigation System ---
         function showPage(pageId) {
-            // Prevent default anchor behavior
-            event.preventDefault();
-            
             // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
                 page.classList.remove('active');
             });
             
             // Show selected page
-            document.getElementById(pageId).classList.add('active');
-            
-            // Update active nav link
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active', 'text-blue-400');
-                link.classList.add('text-gray-300');
+            const selectedPage = document.getElementById(pageId);
+            if(selectedPage) {
+                selectedPage.classList.remove('hidden');
+                // Slight delay for animation trigger
+                setTimeout(() => selectedPage.classList.add('active'), 10);
+            }
+
+            // Update Sidebar Active State
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
             });
             
-            // Set clicked link as active
-            event.currentTarget.classList.add('active', 'text-blue-400');
-            event.currentTarget.classList.remove('text-gray-300');
+            // Find the button that calls this function
+            const navButtons = document.querySelectorAll(`button[onclick="showPage('${pageId}')"]`);
+            navButtons.forEach(btn => btn.classList.add('active'));
+
+            // Close mobile menu if open
+            if(window.innerWidth < 1024) {
+                closeSidebar();
+            }
             
-            // Scroll to top of the page
-            window.scrollTo(0, 0);
-        }
-        
-        // Mobile menu functions
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            const overlay = document.getElementById('mobileMenuOverlay');
-            menu.classList.toggle('translate-x-full');
-            overlay.classList.toggle('hidden');
+            // Scroll to top
+            document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function closeMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            const overlay = document.getElementById('mobileMenuOverlay');
-            menu.classList.add('translate-x-full');
+        // --- Mobile Menu ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                closeSidebar();
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            sidebar.classList.add('-translate-x-full');
             overlay.classList.add('hidden');
         }
 
-        // Training section
-        function showTrainingSection() {
-            event.preventDefault();
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
+        // --- Search Functionality ---
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!query) return;
+
+            const resultsContainer = document.getElementById('resultsContainer');
+            const noResults = document.getElementById('noResults');
+            const searchResults = document.getElementById('searchResults');
+            
+            resultsContainer.innerHTML = '';
+            searchResults.classList.remove('hidden');
+
+            // Collect all searchable text
+            const pages = document.querySelectorAll('.page');
+            let hasResults = false;
+
+            pages.forEach(page => {
+                const pageId = page.id;
+                if (pageId === 'home') return; // Skip dashboard
+
+                const title = page.querySelector('h2')?.textContent || pageId;
+                const content = page.innerText.toLowerCase();
+                
+                if (content.includes(query)) {
+                    hasResults = true;
+                    
+                    // Find snippet
+                    const index = content.indexOf(query);
+                    const start = Math.max(0, index - 40);
+                    const end = Math.min(content.length, index + 60);
+                    let snippet = page.innerText.substring(start, end);
+                    
+                    // Highlight
+                    const regex = new RegExp(query, 'gi');
+                    snippet = snippet.replace(regex, match => `<span class="bg-yellow-500/40 text-white px-1 rounded">${match}</span>`);
+
+                    const resultCard = document.createElement('div');
+                    resultCard.className = 'glass-card p-4 rounded-lg cursor-pointer hover:border-blue-500 transition-colors';
+                    resultCard.innerHTML = `
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-bold text-blue-400 capitalize">${title}</h4>
+                            <i class="fas fa-chevron-right text-slate-600"></i>
+                        </div>
+                        <p class="text-slate-400 text-sm">...${snippet}...</p>
+                    `;
+                    resultCard.onclick = () => {
+                        clearSearch();
+                        showPage(pageId);
+                        // Scroll to match logic
+                        setTimeout(() => {
+                            highlightAndScroll(pageId, query);
+                        }, 300); // wait for transition
+                    };
+                    resultsContainer.appendChild(resultCard);
+                }
             });
-            
-            // Show training section
-            document.getElementById('section8').classList.add('active');
-            
-            // Update active nav link
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active', 'text-blue-400');
-                link.classList.add('text-gray-300');
-            });
-            
-            // Set clicked link as active
-            event.currentTarget.classList.add('active', 'text-blue-400');
-            event.currentTarget.classList.remove('text-gray-300');
-            
-            // Scroll to top of the page
-            window.scrollTo(0, 0);
+
+            if (!hasResults) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
         }
 
-        // Set home as default active page
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu event listeners
-            document.getElementById('mobileMenuButton').addEventListener('click', toggleMobileMenu);
-            document.getElementById('closeMobileMenu').addEventListener('click', closeMobileMenu);
-            document.getElementById('mobileMenuOverlay').addEventListener('click', closeMobileMenu);
-            showPage('home');
-            
-            // Mobile scroll behavior for header
-            if (window.innerWidth <= 768) {
-                let lastScroll = 0;
-                const header = document.getElementById('main-header');
-                const nav = document.getElementById('main-nav');
+        function highlightAndScroll(pageId, searchText) {
+            const page = document.getElementById(pageId);
+            if (!page) return;
+
+            // Simple TreeWalker to find text node
+            const walker = document.createTreeWalker(page, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            while (node = walker.nextNode()) {
+                const text = node.nodeValue.toLowerCase();
+                const index = text.indexOf(searchText);
                 
-                window.addEventListener('scroll', function() {
-                    const currentScroll = window.pageYOffset;
+                if (index >= 0) {
+                    // Found text node
+                    const range = document.createRange();
+                    range.setStart(node, index);
+                    range.setEnd(node, index + searchText.length);
                     
-                    if (currentScroll <= 0) {
-                        header.classList.remove('hidden');
-                        nav.classList.remove('hidden');
-                        return;
+                    const span = document.createElement('span');
+                    span.className = 'search-highlight';
+                    
+                    try {
+                        range.surroundContents(span);
+                        span.scrollIntoView({behavior: "smooth", block: "center"});
+                        
+                        // Remove highlight after 5s
+                        setTimeout(() => {
+                            const parent = span.parentNode;
+                            parent.replaceChild(document.createTextNode(span.textContent), span);
+                            parent.normalize();
+                        }, 5000);
+                    } catch (e) {
+                        console.warn("Complex highlight failed, scrolling only");
+                         node.parentElement.scrollIntoView({behavior: "smooth", block: "center"});
                     }
-                    
-                    if (currentScroll > lastScroll && !header.classList.contains('hidden')) {
-                        // Scrolling down
-                        header.classList.add('hidden');
-                        nav.classList.add('hidden');
-                    } else if (currentScroll < lastScroll && header.classList.contains('hidden')) {
-                        // Scrolling up
-                        header.classList.remove('hidden');
-                        nav.classList.remove('hidden');
-                    }
-                    
-                    lastScroll = currentScroll;
-                });
+                    return; // Jump to first match
+                }
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').classList.add('hidden');
+        }
+
+        // Keyboard Shortcut for Search
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+            if (e.key === 'Escape') {
+                clearSearch();
+                closeSidebar();
             }
         });
+
     </script>
 </body>
 </html>
